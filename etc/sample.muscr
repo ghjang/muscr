@@ -1,3 +1,5 @@
+-- Global properties
+
 @title: A Sample Song
 @author: ghjang
 
@@ -5,21 +7,28 @@
 @defaultPitchRange: 3
 @defaultClef: G
 
+-- Section A
 A :=
 {
     C, D | E, (F, G) | A   | B, C
     
-    [[Clef: F]] 
-    C2M  | E2m       | A2m | F2M
+    -- F Clef
+    [[Clef(F)]] 
+    C2M  | E2m       | A2m | F2M    -- NOTE: used explicit pitch range number
 }
 
-[[Scale: A Minor]]
+{--
+    Section A' with annotation
+--}
+[[Scale(A Minor)]]
 A' :=
 {
     C, D | E, (F, G) | A   | B, C
 
-    [[Clef: F]]
+    -- F Clef
+    [[Clef(F)]]
     F2M  | E2m       | A2m | C2M
 }
 
+-- A sample song form
 songForm := A A'
