@@ -1,0 +1,25 @@
+@title: A Sample Song
+@author: ghjang
+
+@defautlScale: C Major
+@defaultPitchRange: 3
+@defaultClef: G
+
+A :=
+{
+    C, D | E, (F, G) | A   | B, C
+    
+    [[Clef: F]] 
+    C2M  | E2m       | A2m | F2M
+}
+
+[[Scale: A Minor]]
+A' :=
+{
+    C, D | E, (F, G) | A   | B, C
+
+    [[Clef: F]]
+    F2M  | E2m       | A2m | C2M
+}
+
+songForm := A A'
