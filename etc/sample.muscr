@@ -28,10 +28,9 @@ A' :=
 {
     C, D | E, (F, G) | A   | B, C
 
-    -- F Clef
-    [[Clef(F)]]
+    [[Clef(F)]] -- F Clef
     F2M  | E2m       | A2m | C2M
 }
 
 -- A sample song form
-songForm := A A'
+songForm := { A, A' }
