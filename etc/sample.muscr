@@ -7,6 +7,9 @@
 @defaultPitchRange: 3
 @defaultClef: G
 
+@timeSignature: 4 / 4
+@bpm: 100
+
 -- Section A
 A :=
 {
