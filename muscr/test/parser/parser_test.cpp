@@ -12,12 +12,12 @@ TEST_CASE("parse", "[parser]")
     using lexer_type = lex::lexertl::lexer<lex::lexertl::token<base_iterator_type>>;
 
     // iterator type exposed by the lexer
-    using iterator_type = strip_comments_tokens<lexer_type>::iterator_type;
+    using iterator_type = MuscrTokens<lexer_type>::iterator_type;
 
     // now we use the types defined above to create the lexer and grammar
     // object instances needed to invoke the parsing process
-    strip_comments_tokens<lexer_type> l;            // Our lexer
-    strip_comments_grammar<iterator_type> g(l);     // Our parser
+    MuscrTokens<lexer_type> l;          // Our lexer
+    MuscrGrammar<iterator_type> g(l);   // Our parser
 
     // Parsing is done based on the token stream, not the character
     // stream read from the input.

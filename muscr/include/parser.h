@@ -29,16 +29,16 @@ std::string read_from_file(char const* infile)
 using namespace boost::spirit;
 
 
-enum tokenids
+enum TokenId
 {
     ID_ANY = lex::min_token_id + 10
 };
 
 template <typename Lexer>
-struct strip_comments_tokens : lex::lexer<Lexer>
+struct MuscrTokens : lex::lexer<Lexer>
 {
-    strip_comments_tokens()
-            : strip_comments_tokens::base_type(lex::match_flags::match_default)
+    MuscrTokens()
+            : MuscrTokens::base_type(lex::match_flags::match_default)
     {
         // define tokens and associate them with the lexer
         lineComment = "\"--\"[^\n]*";       // '--[^\n]*'
@@ -71,11 +71,11 @@ struct strip_comments_tokens : lex::lexer<Lexer>
 
 
 template <typename Iterator>
-struct strip_comments_grammar : qi::grammar<Iterator>
+struct MuscrGrammar : qi::grammar<Iterator>
 {
     template <typename TokenDef>
-    strip_comments_grammar(TokenDef const& tok)
-            : strip_comments_grammar::base_type(start)
+    MuscrGrammar(TokenDef const& tok)
+            : MuscrGrammar::base_type(start)
     {
         // The in_state("COMMENT")[...] parser component switches the lexer
         // state to be 'COMMENT' during the matching of the embedded parser.
