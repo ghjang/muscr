@@ -49,30 +49,32 @@ struct strip_comments_tokens : lex::lexer<Lexer>
             : strip_comments_tokens::base_type(lex::match_flags::match_default)
     {
         // define tokens and associate them with the lexer
-        cppcomment = "\"//\"[^\n]*";    // '//[^\n]*'
-        ccomment = "\"/*\"";            // '/*'
-        endcomment = "\"*/\"";          // '*/'
+        lineComment = "\"--\"[^\n]*";       // '--[^\n]*'
+        blockCommentStart = "\"{--\"";      // '{--'
+        blockCommentEnd = "\"--}\"";        // '--}'
 
         // The following tokens are associated with the default lexer state
         // (the "INITIAL" state). Specifying 'INITIAL' as a lexer state is
         // strictly optional.
         this->self.add
-                (cppcomment)    // no explicit token id is associated
-                (ccomment)
+                (lineComment)    // no explicit token id is associated
+                (blockCommentStart)
                 (".", ID_ANY)    // ID_ANY is the token id associated with this token
-            // definition
-                ;
+                                 // definition
+        ;
 
         // The following tokens are associated with the lexer state "COMMENT".
         // We switch lexer states from inside the parsing process using the
         // in_state("COMMENT")[] parser component as shown below.
         this->self("COMMENT").add
-                (endcomment)
+                (blockCommentEnd)
                 (".", ID_ANY)
-                ;
+        ;
     }
 
-    lex::token_def<> cppcomment, ccomment, endcomment;
+    lex::token_def<> lineComment;
+    lex::token_def<> blockCommentStart;
+    lex::token_def<> blockCommentEnd;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -87,17 +89,17 @@ struct strip_comments_grammar : qi::grammar<Iterator>
     {
         // The in_state("COMMENT")[...] parser component switches the lexer
         // state to be 'COMMENT' during the matching of the embedded parser.
-        start =  *(   tok.ccomment
-                              >>  qi::in_state("COMMENT")
-                              [
-                                      // the lexer is in the 'COMMENT' state during
-                                      // matching of the following parser components
-                                      *token(ID_ANY) >> tok.endcomment
-                              ]
-                      |   tok.cppcomment
-                      |   qi::token(ID_ANY)   [ std::cout << _1 ]
-        )
-                ;
+        start = *(   tok.blockCommentStart
+                     >>  qi::in_state("COMMENT")
+                         [
+                             // the lexer is in the 'COMMENT' state during
+                             // matching of the following parser components
+                             *token(ID_ANY) >> tok.blockCommentEnd
+                         ]
+                 |   tok.lineComment
+                 |   qi::token(ID_ANY)  [ std::cout << _1 ]
+                 )
+        ;
     }
 
     qi::rule<Iterator> start;
