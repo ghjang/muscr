@@ -16,27 +16,22 @@ TEST_CASE("parse", "[parser]")
 
     // now we use the types defined above to create the lexer and grammar
     // object instances needed to invoke the parsing process
-    strip_comments_tokens<lexer_type> strip_comments;           // Our lexer
-    strip_comments_grammar<iterator_type> g (strip_comments);   // Our parser
+    strip_comments_tokens<lexer_type> l;            // Our lexer
+    strip_comments_grammar<iterator_type> g(l);     // Our parser
 
     // Parsing is done based on the token stream, not the character
     // stream read from the input.
     std::string str (read_from_file("/Users/gilhojang/GitHub/muscr/muscr/etc/sample.muscr"));
     base_iterator_type first = str.begin();
 
-    bool r = lex::tokenize_and_parse(first, str.end(), strip_comments, g);
-
-    if (r) {
-        std::cout << "-------------------------\n";
-        std::cout << "Parsing succeeded\n";
-        std::cout << "-------------------------\n";
-    }
-    else {
+    bool r = lex::tokenize_and_parse(first, str.end(), l, g);
+    if (!r) {
         std::string rest(first, str.end());
         std::cout << "-------------------------\n";
         std::cout << "Parsing failed\n";
         std::cout << "stopped at: \"" << rest << "\"\n";
         std::cout << "-------------------------\n";
+        REQUIRE(r);
     }
 }
 

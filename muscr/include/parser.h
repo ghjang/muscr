@@ -13,11 +13,7 @@
 #include <boost/spirit/include/phoenix_container.hpp>
 
 
-///////////////////////////////////////////////////////////////////////////////
-//  Helper function reading a file into a string
-///////////////////////////////////////////////////////////////////////////////
-inline std::string
-read_from_file(char const* infile)
+std::string read_from_file(char const* infile)
 {
     std::ifstream instream(infile);
     if (!instream.is_open()) {
@@ -33,10 +29,6 @@ read_from_file(char const* infile)
 using namespace boost::spirit;
 
 
-///////////////////////////////////////////////////////////////////////////////
-//  Token definition: We use the lexertl based lexer engine as the underlying
-//                    lexer type.
-///////////////////////////////////////////////////////////////////////////////
 enum tokenids
 {
     ID_ANY = lex::min_token_id + 10
@@ -77,9 +69,7 @@ struct strip_comments_tokens : lex::lexer<Lexer>
     lex::token_def<> blockCommentEnd;
 };
 
-///////////////////////////////////////////////////////////////////////////////
-//  Grammar definition
-///////////////////////////////////////////////////////////////////////////////
+
 template <typename Iterator>
 struct strip_comments_grammar : qi::grammar<Iterator>
 {
