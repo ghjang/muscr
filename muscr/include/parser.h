@@ -3,7 +3,6 @@
 
 
 #include <iostream>
-#include <fstream>
 #include <string>
 
 #include <boost/config/warning_disable.hpp>
@@ -11,19 +10,6 @@
 #include <boost/spirit/include/lex_lexertl.hpp>
 #include <boost/spirit/include/phoenix_operator.hpp>
 #include <boost/spirit/include/phoenix_container.hpp>
-
-
-std::string read_from_file(char const* infile)
-{
-    std::ifstream instream(infile);
-    if (!instream.is_open()) {
-        std::cerr << "Couldn't open file: " << infile << std::endl;
-        exit(-1);
-    }
-    instream.unsetf(std::ios::skipws);      // No white space skipping!
-    return std::string(std::istreambuf_iterator<char>(instream.rdbuf()),
-                       std::istreambuf_iterator<char>());
-}
 
 
 using namespace boost::spirit;
