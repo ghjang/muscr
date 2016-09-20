@@ -27,16 +27,16 @@ struct MuscrTokens : lex::lexer<Lexer>
             : MuscrTokens::base_type(lex::match_flags::match_default)
     {
         // define tokens and associate them with the lexer
-        lineComment = "\"--\"[^\n]*";       // '--[^\n]*'
-        blockCommentStart = "\"{--\"";      // '{--'
-        blockCommentEnd = "\"--}\"";        // '--}'
+        lineComment_ = "\"--\"[^\n]*";       // '--[^\n]*'
+        blockCommentStart_ = "\"{--\"";      // '{--'
+        blockCommentEnd_ = "\"--}\"";        // '--}'
 
         // The following tokens are associated with the default lexer state
         // (the "INITIAL" state). Specifying 'INITIAL' as a lexer state is
         // strictly optional.
         this->self.add
-                (lineComment)    // no explicit token id is associated
-                (blockCommentStart)
+                (lineComment_)    // no explicit token id is associated
+                (blockCommentStart_)
                 (".", ID_ANY)    // ID_ANY is the token id associated with this token
                                  // definition
         ;
@@ -45,14 +45,14 @@ struct MuscrTokens : lex::lexer<Lexer>
         // We switch lexer states from inside the parsing process using the
         // in_state("COMMENT")[] parser component as shown below.
         this->self("COMMENT").add
-                (blockCommentEnd)
+                (blockCommentEnd_)
                 (".", ID_ANY)
         ;
     }
 
-    lex::token_def<> lineComment;
-    lex::token_def<> blockCommentStart;
-    lex::token_def<> blockCommentEnd;
+    lex::token_def<> lineComment_;
+    lex::token_def<> blockCommentStart_;
+    lex::token_def<> blockCommentEnd_;
 };
 
 
@@ -61,24 +61,24 @@ struct MuscrGrammar : qi::grammar<Iterator>
 {
     template <typename TokenDef>
     MuscrGrammar(TokenDef const& tok)
-            : MuscrGrammar::base_type(start)
+            : MuscrGrammar::base_type(start_)
     {
         // The in_state("COMMENT")[...] parser component switches the lexer
         // state to be 'COMMENT' during the matching of the embedded parser.
-        start = *(   tok.blockCommentStart
-                     >>  qi::in_state("COMMENT")
-                         [
-                             // the lexer is in the 'COMMENT' state during
-                             // matching of the following parser components
-                             *token(ID_ANY) >> tok.blockCommentEnd
-                         ]
-                 |   tok.lineComment
-                 |   qi::token(ID_ANY)  [ std::cout << _1 ]
-                 )
+        start_ = *(   tok.blockCommentStart_
+                              >>  qi::in_state("COMMENT")
+                                    [
+                                      // the lexer is in the 'COMMENT' state during
+                                      // matching of the following parser components
+                                      *token(ID_ANY) >> tok.blockCommentEnd_
+                                    ]
+                  |   tok.lineComment_
+                  |   qi::token(ID_ANY)  [ std::cout << _1 ]
+                  )
         ;
     }
 
-    qi::rule<Iterator> start;
+    qi::rule<Iterator> start_;
 };
 
 
