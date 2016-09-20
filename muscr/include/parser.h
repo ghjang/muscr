@@ -2,6 +2,107 @@
 #define MUSCR_PARSER_H
 
 
+#include <iostream>
+#include <fstream>
+#include <string>
+
+#include <boost/config/warning_disable.hpp>
+#include <boost/spirit/include/qi.hpp>
+#include <boost/spirit/include/lex_lexertl.hpp>
+#include <boost/spirit/include/phoenix_operator.hpp>
+#include <boost/spirit/include/phoenix_container.hpp>
+
+
+///////////////////////////////////////////////////////////////////////////////
+//  Helper function reading a file into a string
+///////////////////////////////////////////////////////////////////////////////
+inline std::string
+read_from_file(char const* infile)
+{
+    std::ifstream instream(infile);
+    if (!instream.is_open()) {
+        std::cerr << "Couldn't open file: " << infile << std::endl;
+        exit(-1);
+    }
+    instream.unsetf(std::ios::skipws);      // No white space skipping!
+    return std::string(std::istreambuf_iterator<char>(instream.rdbuf()),
+                       std::istreambuf_iterator<char>());
+}
+
+
+using namespace boost::spirit;
+
+
+///////////////////////////////////////////////////////////////////////////////
+//  Token definition: We use the lexertl based lexer engine as the underlying
+//                    lexer type.
+///////////////////////////////////////////////////////////////////////////////
+enum tokenids
+{
+    ID_ANY = lex::min_token_id + 10
+};
+
+template <typename Lexer>
+struct strip_comments_tokens : lex::lexer<Lexer>
+{
+    strip_comments_tokens()
+            : strip_comments_tokens::base_type(lex::match_flags::match_default)
+    {
+        // define tokens and associate them with the lexer
+        cppcomment = "\"//\"[^\n]*";    // '//[^\n]*'
+        ccomment = "\"/*\"";            // '/*'
+        endcomment = "\"*/\"";          // '*/'
+
+        // The following tokens are associated with the default lexer state
+        // (the "INITIAL" state). Specifying 'INITIAL' as a lexer state is
+        // strictly optional.
+        this->self.add
+                (cppcomment)    // no explicit token id is associated
+                (ccomment)
+                (".", ID_ANY)    // ID_ANY is the token id associated with this token
+            // definition
+                ;
+
+        // The following tokens are associated with the lexer state "COMMENT".
+        // We switch lexer states from inside the parsing process using the
+        // in_state("COMMENT")[] parser component as shown below.
+        this->self("COMMENT").add
+                (endcomment)
+                (".", ID_ANY)
+                ;
+    }
+
+    lex::token_def<> cppcomment, ccomment, endcomment;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//  Grammar definition
+///////////////////////////////////////////////////////////////////////////////
+template <typename Iterator>
+struct strip_comments_grammar : qi::grammar<Iterator>
+{
+    template <typename TokenDef>
+    strip_comments_grammar(TokenDef const& tok)
+            : strip_comments_grammar::base_type(start)
+    {
+        // The in_state("COMMENT")[...] parser component switches the lexer
+        // state to be 'COMMENT' during the matching of the embedded parser.
+        start =  *(   tok.ccomment
+                              >>  qi::in_state("COMMENT")
+                              [
+                                      // the lexer is in the 'COMMENT' state during
+                                      // matching of the following parser components
+                                      *token(ID_ANY) >> tok.endcomment
+                              ]
+                      |   tok.cppcomment
+                      |   qi::token(ID_ANY)   [ std::cout << _1 ]
+        )
+                ;
+    }
+
+    qi::rule<Iterator> start;
+};
+
 
 #endif //MUSCR_PARSER_H
 
