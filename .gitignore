@@ -20,3 +20,9 @@ muscr/test/.idea/modules.xml
 muscr/test/.idea/test.iml
 
 muscr/test/.idea/workspace.xml
+
+.vscode/.browse.VC.db
+
+.vscode/.browse.VC.db-wal
+
+.vscode/.browse.VC.db-shm
