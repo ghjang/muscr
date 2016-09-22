@@ -64,11 +64,7 @@ struct property_tokens : lex::lexer<Lexer>
             , identifier_("[a-zA-Z_][a-zA-Z0-9_']*")
             , colon_(":")
             , eol_("\n")
-            , m(0)
-            , v(0)
-            , i(0)
-            , c(0)
-            , e(0)
+            , m{}, v{}, i{}, c{}, e{}
     {
         using boost::phoenix::ref;
 
@@ -114,6 +110,7 @@ TEST_CASE("lex", "[lexer]")
          //         << ", words: " << lexer.w
           //        << ", characters: " << lexer.c
            //       << "\n";
+
         std::cout << "m: " << lexer.m
                   << ", v: " << lexer.v
                   << ", i: " << lexer.i
