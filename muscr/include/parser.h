@@ -2,28 +2,19 @@
 #define MUSCR_PARSER_H
 
 
-#include <iostream>
 #include <string>
+#include <iostream>
 
 #include <boost/config/warning_disable.hpp>
 #include <boost/spirit/include/qi.hpp>
-#include <boost/spirit/include/lex_lexertl.hpp>
 #include <boost/spirit/include/phoenix_operator.hpp>
 #include <boost/spirit/include/phoenix_container.hpp>
+
+#include "muscr/include/token_id.h"
 
 
 using namespace boost::spirit;
 
-
-enum TokenId
-{
-    ID_PROPERTY_MARK = lex::min_token_id + 10,
-    ID_PROPERTY_VALUE,
-    ID_IDENTIFIER,
-    ID_COLON,
-    ID_EOL,
-    ID_ANY
-};
 
 template <typename Lexer>
 struct MuscrTokens : lex::lexer<Lexer>
@@ -36,14 +27,12 @@ struct MuscrTokens : lex::lexer<Lexer>
         blockCommentStart_ = "\"{--\"";             // '{--'
         blockCommentEnd_ = "\"--}\"";               // '--}'
 
-        propertyMark_ = "^\"@\"";                   // '^@'
-        propertyValue_ = "[^\n]*";
+        propertyMark_ = "^@";                   // '^@'
+        propertyValue_ = "[^\n]*$";
 
         identifier_ = "[a-zA-Z_][a-zA-Z0-9_']*";
 
-        colon_ = "\":\"";
-
-        eol_ = "\"\n\"";
+        colon_ = ":";
 
         // The following tokens are associated with the default lexer state
         // (the "INITIAL" state). Specifying 'INITIAL' as a lexer state is
@@ -68,7 +57,6 @@ struct MuscrTokens : lex::lexer<Lexer>
                 (identifier_)
                 (colon_)
                 (propertyValue_)
-                (eol_)
         ;
     }
 
@@ -80,7 +68,6 @@ struct MuscrTokens : lex::lexer<Lexer>
     lex::token_def<> propertyValue_;
     lex::token_def<> identifier_;
     lex::token_def<> colon_;
-    lex::token_def<> eol_;
 };
 
 
@@ -108,7 +95,6 @@ struct MuscrGrammar : qi::grammar<Iterator>
                                         tok.identifier_
                                                 >> tok.colon_
                                                 >> tok.propertyValue_
-                                                >> tok.eol_
                                     ]
                                     */
                   |   qi::token(ID_ANY)  [ std::cout << _1 ]
