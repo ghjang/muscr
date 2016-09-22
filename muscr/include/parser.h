@@ -27,12 +27,13 @@ struct MuscrTokens : lex::lexer<Lexer>
         blockCommentStart_ = "\"{--\"";             // '{--'
         blockCommentEnd_ = "\"--}\"";               // '--}'
 
-        propertyMark_ = "^@";                   // '^@'
-        propertyValue_ = "[^\n]*$";
+        propertyMark_ = "@";                   // '@'
 
         identifier_ = "[a-zA-Z_][a-zA-Z0-9_']*";
 
         colon_ = ":";
+
+        eol_ = "\n";
 
         // The following tokens are associated with the default lexer state
         // (the "INITIAL" state). Specifying 'INITIAL' as a lexer state is
@@ -56,7 +57,8 @@ struct MuscrTokens : lex::lexer<Lexer>
         this->self("PROPERTY").add
                 (identifier_)
                 (colon_)
-                (propertyValue_)
+                (eol_)
+                (".", ID_ANY)
         ;
     }
 
@@ -68,6 +70,7 @@ struct MuscrTokens : lex::lexer<Lexer>
     lex::token_def<> propertyValue_;
     lex::token_def<> identifier_;
     lex::token_def<> colon_;
+    lex::token_def<> eol_;
 };
 
 
@@ -94,7 +97,8 @@ struct MuscrGrammar : qi::grammar<Iterator>
                                     [
                                         tok.identifier_
                                                 >> tok.colon_
-                                                >> tok.propertyValue_
+                                                >> *token(ID_ANY)
+                                                >> tok.eol_
                                     ]
                                     */
                   |   qi::token(ID_ANY)  [ std::cout << _1 ]
