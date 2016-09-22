@@ -55,33 +55,77 @@ struct word_count_tokens : lex::lexer<Lexer>
 };
 
 
+template <typename Lexer>
+struct property_tokens : lex::lexer<Lexer>
+{
+    property_tokens()
+            : propertyMark_("@")
+            , propertyValue_("[^@:\n]*")
+            , identifier_("[a-zA-Z_][a-zA-Z0-9_']*")
+            , colon_(":")
+            , eol_("\n")
+            , m(0)
+            , v(0)
+            , i(0)
+            , c(0)
+            , e(0)
+    {
+        using boost::phoenix::ref;
+
+        this->self
+                = propertyMark_ [++ref(m)]
+                    | identifier_ [++ref(i)]
+                    | colon_ [++ref(c)]
+                    | propertyValue_ [++ref(v)]
+                    | eol_ [++ref(e)]
+                ;
+    }
+
+    std::size_t m, v, i, c, e;
+
+    lex::token_def<> propertyMark_;
+    lex::token_def<> propertyValue_;
+    lex::token_def<> identifier_;
+    lex::token_def<> colon_;
+    lex::token_def<> eol_;
+};
+
 TEST_CASE("lex", "[lexer]")
 {
-    using token_type = lex::lexertl::token<char const*, lex::omit, boost::mpl::false_>;
+    using token_type = lex::lexertl::token<>;
     using lexer_type = lex::lexertl::actor_lexer<token_type>;
 
-    word_count_tokens<lexer_type> word_count_lexer;
+    //word_count_tokens<lexer_type> lexer;
+    property_tokens<lexer_type> lexer;
 
     std::string str (read_from_file("/Users/gilhojang/GitHub/muscr/muscr/etc/sample_property.muscr"));
     char const* first = str.c_str();
     char const* last = &first[str.size()];
 
-    lexer_type::iterator_type iter = word_count_lexer.begin(first, last);
-    lexer_type::iterator_type end = word_count_lexer.end();
+    lexer_type::iterator_type iter = lexer.begin(first, last);
+    lexer_type::iterator_type end = lexer.end();
 
-    while (iter != end && token_is_valid(*iter))
+    while (iter != end && token_is_valid(*iter)) {
         ++iter;
+    }
 
     if (iter == end) {
-        std::cout << "lines: " << word_count_lexer.l
-                  << ", words: " << word_count_lexer.w
-                  << ", characters: " << word_count_lexer.c
+        //std::cout << "lines: " << lexer.l
+         //         << ", words: " << lexer.w
+          //        << ", characters: " << lexer.c
+           //       << "\n";
+        std::cout << "m: " << lexer.m
+                  << ", v: " << lexer.v
+                  << ", i: " << lexer.i
+                  << ", c: " << lexer.c
+                  << ", e: " << lexer.e
                   << "\n";
     }
     else {
         std::string rest(first, last);
         std::cout << "Lexical analysis failed\n" << "stopped at: \""
                   << rest << "\"\n";
+        REQUIRE(false);
     }
 }
 
