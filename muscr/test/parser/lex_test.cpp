@@ -1,8 +1,11 @@
-#include <boost/spirit/include/lex_lexertl.hpp>
 #include <boost/spirit/include/phoenix_operator.hpp>
 #include <boost/spirit/include/phoenix_statement.hpp>
 #include <boost/spirit/include/phoenix_algorithm.hpp>
 #include <boost/spirit/include/phoenix_core.hpp>
+
+#include <boost/spirit/include/lex_lexertl.hpp>
+
+#include <boost/spirit/include/qi.hpp>
 
 #include "../catch.hpp"
 
@@ -10,7 +13,8 @@
 #include "muscr/include/utility.h"
 
 
-namespace lex = boost::spirit::lex;
+using namespace boost::spirit;
+using namespace boost::spirit::ascii;
 
 
 struct distance_func
@@ -115,16 +119,65 @@ struct property_tokens1 : lex::lexer<Lexer>
     lex::token_def<> any_;
 };
 
+template <typename Lexer>
+struct property_tokens2 : lex::lexer<Lexer>
+{
+    property_tokens2()
+            : propertyMark_("@")
+            , identifier_("[a-zA-Z_][a-zA-Z0-9_']*")
+    {
+        using boost::phoenix::ref;
+
+        this->self.add
+                (propertyMark_)
+                (identifier_)
+                (":", ID_COLON)
+                ("\n", ID_EOL)
+                (".", ID_ANY)
+        ;
+    }
+
+    lex::token_def<> propertyMark_;
+    lex::token_def<> identifier_;
+};
+
+template <typename Iterator>
+struct property_grammar : qi::grammar<Iterator>
+{
+    template <typename TokenDef>
+    property_grammar(TokenDef const& tok)
+            : property_grammar::base_type(start_)
+    {
+        start_ = *(
+                    tok.propertyMark_
+                  | tok.identifier_
+                  | token(ID_COLON)
+                  | token(ID_EOL)
+                  | token(ID_ANY)
+                  )
+        ;
+    }
+
+    qi::rule<Iterator> start_;
+};
+
 
 TEST_CASE("property tokens", "[lex]")
 {
-    using token_type = lex::lexertl::token<>;
+    using token_type = lex::lexertl::token<std::string::iterator>;
     using lexer_type = lex::lexertl::actor_lexer<token_type>;
 
     //word_count_tokens<lexer_type> lexer;
     //property_tokens<lexer_type> lexer;
-    property_tokens1<lexer_type> lexer;
+    //property_tokens1<lexer_type> lexer;
 
+    property_tokens2<lexer_type> lexer;
+
+    using iterator_type = property_tokens2<lexer_type>::iterator_type;
+
+    property_grammar<iterator_type> grammar(lexer);
+
+    /*
     std::string str (read_from_file("/Users/gilhojang/GitHub/muscr/muscr/etc/sample_property.muscr"));
     char const* first = str.c_str();
     char const* last = &first[str.size()];
@@ -135,8 +188,9 @@ TEST_CASE("property tokens", "[lex]")
     while (iter != end && token_is_valid(*iter)) {
         ++iter;
     }
+     */
 
-    if (iter == end) {
+    //if (iter == end) {
         /*
         std::cout << "lines: " << lexer.l
                   << ", words: " << lexer.w
@@ -153,18 +207,35 @@ TEST_CASE("property tokens", "[lex]")
                   << "\n";
         */
 
+        /*
         std::cout << "m: " << lexer.m
                   << ", i: " << lexer.i
                   << ", c: " << lexer.c
                   << ", e: " << lexer.e
                   << ", a: " << lexer.a
                   << "\n";
+                  */
+
+    /*
     }
     else {
         std::string rest(first, last);
         std::cout << "Lexical analysis failed\n" << "stopped at: \""
                   << rest << "\"\n";
         REQUIRE(false);
+    }
+     */
+
+    std::string str (read_from_file("/Users/gilhojang/GitHub/muscr/muscr/etc/sample_property.muscr"));
+    token_type::iterator_type first = str.begin();
+    bool r = lex::tokenize_and_parse(first, str.end(), lexer, grammar);
+    if (!r) {
+        std::string rest(first, str.end());
+        std::cout << "-------------------------\n";
+        std::cout << "Parsing failed\n";
+        std::cout << "stopped at: \"" << rest << "\"\n";
+        std::cout << "-------------------------\n";
+        REQUIRE(r);
     }
 }
 
