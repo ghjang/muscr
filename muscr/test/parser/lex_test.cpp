@@ -86,13 +86,44 @@ struct property_tokens : lex::lexer<Lexer>
     lex::token_def<> eol_;
 };
 
-TEST_CASE("lex", "[lexer]")
+template <typename Lexer>
+struct property_tokens1 : lex::lexer<Lexer>
+{
+    property_tokens1()
+            : propertyMark_("@")
+            , identifier_("[a-zA-Z_][a-zA-Z0-9_']*")
+            , colon_(":")
+            , eol_("\n")
+            , any_(".")
+            , m{}, a{}, i{}, c{}, e{}
+    {
+        using boost::phoenix::ref;
+
+        this->self = propertyMark_ [++ref(m)]
+                        | identifier_ [++ref(i)]
+                        | colon_ [++ref(c)]
+                        | eol_ [++ref(e)]
+                        | any_ [++ref(a)];
+    }
+
+    std::size_t m, a, i, c, e;
+
+    lex::token_def<> propertyMark_;
+    lex::token_def<> identifier_;
+    lex::token_def<> colon_;
+    lex::token_def<> eol_;
+    lex::token_def<> any_;
+};
+
+
+TEST_CASE("property tokens", "[lex]")
 {
     using token_type = lex::lexertl::token<>;
     using lexer_type = lex::lexertl::actor_lexer<token_type>;
 
     //word_count_tokens<lexer_type> lexer;
-    property_tokens<lexer_type> lexer;
+    //property_tokens<lexer_type> lexer;
+    property_tokens1<lexer_type> lexer;
 
     std::string str (read_from_file("/Users/gilhojang/GitHub/muscr/muscr/etc/sample_property.muscr"));
     char const* first = str.c_str();
@@ -106,16 +137,27 @@ TEST_CASE("lex", "[lexer]")
     }
 
     if (iter == end) {
-        //std::cout << "lines: " << lexer.l
-         //         << ", words: " << lexer.w
-          //        << ", characters: " << lexer.c
-           //       << "\n";
+        /*
+        std::cout << "lines: " << lexer.l
+                  << ", words: " << lexer.w
+                  << ", characters: " << lexer.c
+                  << "\n";
+        */
 
+        /*
         std::cout << "m: " << lexer.m
                   << ", v: " << lexer.v
                   << ", i: " << lexer.i
                   << ", c: " << lexer.c
                   << ", e: " << lexer.e
+                  << "\n";
+        */
+
+        std::cout << "m: " << lexer.m
+                  << ", i: " << lexer.i
+                  << ", c: " << lexer.c
+                  << ", e: " << lexer.e
+                  << ", a: " << lexer.a
                   << "\n";
     }
     else {
