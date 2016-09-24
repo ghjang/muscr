@@ -123,16 +123,20 @@ template <typename Lexer>
 struct property_tokens2 : lex::lexer<Lexer>
 {
     property_tokens2()
-            : propertyMark_("@")
-            , identifier_("[a-zA-Z_][a-zA-Z0-9_']*")
+        : property_tokens2::base_type(lex::match_flags::match_default)
     {
-        using boost::phoenix::ref;
+        propertyMark_ = "@";
+        identifier_ = "[a-zA-Z_][a-zA-Z0-9_']*";
 
         this->self.add
                 (propertyMark_)
+                (".", ID_ANY)
+        ;
+
+        this->self("PROPERTY").add
                 (identifier_)
                 (":", ID_COLON)
-                ("\n", ID_EOL)
+                (R"(\n)", ID_EOL)
                 (".", ID_ANY)
         ;
     }
@@ -150,9 +154,13 @@ struct property_grammar : qi::grammar<Iterator>
     {
         start_ = *(
                     tok.propertyMark_
-                  | tok.identifier_
-                  | token(ID_COLON)
-                  | token(ID_EOL)
+                            >> qi::in_state("PROPERTY")
+                                    [
+                                        tok.identifier_ [ std::cout << _1 ]
+                                                >> token(ID_COLON) [ std::cout << _1 ]
+                                                >> *token(ID_ANY) [ std::cout << _1 ]
+                                                >> token(ID_EOL) [ std::cout << _1 ]
+                                    ]
                   | token(ID_ANY)
                   )
         ;
@@ -236,6 +244,10 @@ TEST_CASE("property tokens", "[lex]")
         std::cout << "stopped at: \"" << rest << "\"\n";
         std::cout << "-------------------------\n";
         REQUIRE(r);
+    }
+    else {
+        std::string rest(first, str.end());
+        std::cout << "\nrest:\n" << rest << '\n';
     }
 }
 

@@ -17,7 +17,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z")
 set(SOURCE_FILES
         main.cpp
         parser/parser_test.cpp
-        parser/lex_test.cpp)
+        parser/lex_test.cpp
+        parser/qi_test.cpp)
 
 add_executable(muscr_parser_test ${SOURCE_FILES})
 
