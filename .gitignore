@@ -21,6 +21,8 @@ muscr/test/.idea/test.iml
 
 muscr/test/.idea/workspace.xml
 
+muscr/test/debug/*
+
 .vscode/.browse.VC.db
 
 .vscode/.browse.VC.db-wal
