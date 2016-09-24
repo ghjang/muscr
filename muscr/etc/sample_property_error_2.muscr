@@ -1,0 +1,9 @@
+@title: A Sample Song
+@author ghjang
+
+@defautlScale: C Major
+@defaultPitchRange: 3
+@defaultClef: G
+
+@timeSignature: 4 / 4
+@bpm: 100
