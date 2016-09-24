@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.5.2)
 project(muscr_parser_test)
 
 set(BOOST_ROOT "../../../boost_1_60_0")
