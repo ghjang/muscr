@@ -1,4 +1,5 @@
 #include <string>
+#include <vector>
 
 #include <boost/spirit/include/qi.hpp>
 
@@ -37,5 +38,30 @@ TEST_CASE("num_list1", "[qi]")
 
 TEST_CASE("num_list2", "[qi]")
 {
-    
+    using namespace boost::spirit;
+
+    auto num_list_parser = [](auto begin, auto end, auto & v) {
+        using qi::double_;
+
+        bool r = qi::phrase_parse(
+                        begin,
+                        end,
+                        double_ >> *(',' >> double_),
+                        ascii::space,
+                        v
+                    );
+
+        if (begin != end) {
+            return false;
+        }
+        return r;
+    };
+
+    std::vector<double> v;
+    std::string s0 = "1.0, 2.2, 33.3";
+    REQUIRE(num_list_parser(s0.begin(), s0.end(), v));
+    REQUIRE(v.size() == 3);
+    REQUIRE(v[0] == 1.0);
+    REQUIRE(v[1] == 2.2);
+    REQUIRE(v[2] == 33.3);
 }
