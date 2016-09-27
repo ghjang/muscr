@@ -95,3 +95,18 @@ TEST_CASE("num_list3", "[qi]")
     REQUIRE(v[1] == 2.2);
     REQUIRE(v[2] == 33.3);
 }
+
+TEST_CASE("actions", "[qi]")
+{
+    using namespace boost::spirit;
+
+    char const * pBegin = "{123}";
+    char const * pEnd = pBegin + std::strlen(pBegin);
+    int i = 0;
+    qi::parse(
+        pBegin,
+        pEnd,
+        '{' >> int_[([&i](int val) { i = val; })] >> '}' // NOTE: double-left-square-bracket problem
+    );
+    REQUIRE(i == 123);
+}
