@@ -2,6 +2,7 @@
 #include <vector>
 
 #include <boost/spirit/include/qi.hpp>
+#include <boost/fusion/include/adapt_struct.hpp>
 
 #include "../catch.hpp"
 
@@ -125,4 +126,93 @@ TEST_CASE("number sum", "[qi]")
         ascii::space
     );
     REQUIRE(42.2 == d);
+}
+
+
+namespace client
+{
+    struct employee
+    {
+        int age;
+        std::string surname;
+        std::string forename;
+        double salary;
+    };
+} // namespace client
+
+BOOST_FUSION_ADAPT_STRUCT(
+    client::employee,
+    (int, age)
+    (std::string, surname)
+    (std::string, forename)
+    (double, salary)
+)
+
+namespace client
+{
+    using namespace boost::spirit;
+
+    template <typename Iterator>
+    struct employee_parser : qi::grammar<Iterator, employee(), ascii::space_type>
+    {
+        employee_parser() : employee_parser::base_type(start)
+        {
+            using ascii::char_;
+
+            quoted_string %= lexeme['"' >> +(char_ - '"') >> '"'];
+
+            start %=
+                lit("employee")
+                >> '{'
+                >>  int_ >> ','
+                >>  quoted_string >> ','
+                >>  quoted_string >> ','
+                >>  double_
+                >>  '}'
+                ;
+        }
+
+        qi::rule<Iterator, std::string(), ascii::space_type> quoted_string;
+        qi::rule<Iterator, employee(), ascii::space_type> start;
+    };
+} // namespace client
+
+TEST_CASE("adapt struct", "[qi]")
+{
+    using namespace boost::spirit;
+
+    char const * const pStr = R"(
+                                    employee{ 39, "Jang", "Gil Ho", 10000 }                                employee{ 39, "XXXX", "YYY ZZ", 10000 }                                employee{ 29, "XXXX", "YYY ZZ", 10000 }
+                                )";
+    char const * pBegin = pStr;
+    char const * const pEnd = pStr + std::strlen(pStr);
+
+    client::employee emp;
+    client::employee_parser<char const *> parser_grammar;
+
+    qi::phrase_parse(
+        pBegin,
+        pEnd,
+        parser_grammar,
+        ascii::space,
+        emp
+    );
+    REQUIRE(emp.surname == "Jang");
+    REQUIRE(pBegin != pEnd);
+
+    std::vector<client::employee> empV;
+
+    pBegin = pStr;
+    qi::phrase_parse(
+        pBegin,
+        pEnd,
+        +parser_grammar,
+        ascii::space,
+        empV
+    );
+    REQUIRE(empV.size() == 3);
+    REQUIRE(empV[0].surname == "Jang");
+    REQUIRE(empV[1].surname == "XXXX");
+    REQUIRE(empV[2].age == 29);
+    REQUIRE(pBegin == pEnd);
 }
