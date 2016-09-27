@@ -6,6 +6,8 @@
 #include <iostream>
 #include <fstream>
 
+#include <boost/spirit/include/qi.hpp>
+
 
 inline std::string read_from_file(char const* infile)
 {
@@ -20,5 +22,46 @@ inline std::string read_from_file(char const* infile)
 }
 
 
-#endif //MUSCR_UTILITY_H
+namespace tools
+{
+    namespace spirit = boost::spirit;
 
+    template <typename Expr, typename Iterator = spirit::unused_type>
+    struct attribute_of_parser
+    {
+        using parser_expression_type = typename spirit::result_of::compile<
+                                                        spirit::qi::domain, Expr
+                                                    >::type;
+
+        using type = typename spirit::traits::attribute_of<
+                                    parser_expression_type, spirit::unused_type, Iterator
+                                >::type;
+    };
+
+    template <typename T>
+    void display_attribute_of_parser(T const &) 
+    {
+        // Report invalid expression error as early as possible.
+        // If you got an error_invalid_expression error message here,
+        // then the expression (expr) is not a valid spirit qi expression.
+        BOOST_SPIRIT_ASSERT_MATCH(spirit::qi::domain, T);
+
+        using type = typename attribute_of_parser<T>::type;
+        std::cout << typeid(type).name() << std::endl;
+    }
+
+    template <typename T>
+    void display_attribute_of_parser(std::ostream& os, T const &) 
+    {
+        // Report invalid expression error as early as possible.
+        // If you got an error_invalid_expression error message here,
+        // then the expression (expr) is not a valid spirit qi expression.
+        BOOST_SPIRIT_ASSERT_MATCH(spirit::qi::domain, T);
+
+        using type = typename attribute_of_parser<T>::type;
+        os << typeid(type).name() << std::endl;
+    }
+} // namespace tools
+
+
+#endif //MUSCR_UTILITY_H
