@@ -110,3 +110,19 @@ TEST_CASE("actions", "[qi]")
     );
     REQUIRE(i == 123);
 }
+
+TEST_CASE("number sum", "[qi]")
+{
+    using namespace boost::spirit;
+
+    char const * pBegin = "10, 22.2, 10";
+    char const * pEnd = pBegin + std::strlen(pBegin);
+    double d = 0;
+    qi::phrase_parse(
+        pBegin,
+        pEnd,
+        double_[([&d](auto val) { d += val; })] % ',',
+        ascii::space
+    );
+    REQUIRE(42.2 == d);
+}
