@@ -216,3 +216,95 @@ TEST_CASE("adapt struct", "[qi]")
     REQUIRE(empV[2].age == 29);
     REQUIRE(pBegin == pEnd);
 }
+
+namespace client
+{
+    // our normal ordinary C++ user-defined struct
+    struct student
+    {
+        std::string name_;
+        std::vector<double> score_;
+    };
+} // namespace client
+
+// client::student to Boost.Fusion sequence adaptation
+BOOST_FUSION_ADAPT_STRUCT(
+    client::student,
+    (std::string, name_)
+    (std::vector<double>, score_)
+)
+
+namespace client
+{
+    using namespace boost::spirit;
+
+    // NOTE: a grammar itself is a parser.
+    //       this parser's attribute is client::student.
+    template <typename Iterator>
+    struct student_score_grammar
+            : qi::grammar<Iterator, student(), ascii::space_type>
+    {
+        student_score_grammar() : student_score_grammar::base_type(student_score_)
+        {
+            using ascii::char_;
+
+            // quoted string
+            name_ %= lexeme['"' >> +(char_ - '"') >> '"'];
+
+            // grammar start point.
+            // the resulting synthesized attribute for this compound parser expression will be something like:
+            //      fusion::vector<
+            //                  std::string,
+            //                  std::vector<double>
+            //      >
+            // note that the synthesized attribute is compatible with client::student.
+            student_score_ %=
+                '{'
+                >>  name_ >> ','
+                >> (double_ % ',')
+                >>  '}'
+                ;
+        }
+
+        // NOTE: a rule itself is a parser.
+        qi::rule<Iterator, std::string(), ascii::space_type> name_;
+        qi::rule<Iterator, student(), ascii::space_type> student_score_;   
+    };
+} // namespace client
+
+TEST_CASE("synthesized parser attribute", "[qi]")
+{
+    using namespace boost::spirit;
+
+    char const * const pStr = R"(
+                                    { "ghjang", 100, 99, 98, 97 }
+                                    { "xxxxxx", 200, 99.9, 98.8, 97.7 }
+                                    { "yyyyyy", 300, 99, 98, 97 }
+                                )";
+    char const * pBegin = pStr;
+    char const * const pEnd = pStr + std::strlen(pStr);
+
+    using student_scores = std::vector<client::student>;
+    using student_score_record_parser = client::student_score_grammar<char const *>; 
+
+    student_scores scores;              // result sink container
+    student_score_record_parser score;  // NOTE: a grammar itself is a parser.
+
+    qi::phrase_parse(
+        pBegin,
+        pEnd,
+        +score,     // it is still possible to modify the parser expression at here.
+                    // at lease one score record is required.
+                    // this parser expression's resulting attribute is like
+                    // std::vector<client::student>, i.e. student_scores.
+        ascii::space,
+        scores      // the parsed result will be filled in scores of which type is Fusion-compatible.
+    );
+    REQUIRE(scores.size() == 3);
+    REQUIRE(scores[0].name_ == "ghjang");
+    REQUIRE(scores[0].score_[0] == 100);
+    REQUIRE(scores[1].name_ == "xxxxxx");
+    REQUIRE(scores[1].score_[1] == 99.9);
+    REQUIRE(scores[2].name_ == "yyyyyy");
+    REQUIRE(scores[2].score_[2] == 98);
+}
