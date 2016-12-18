@@ -5,15 +5,19 @@
 #include <boost/spirit/include/qi.hpp>
 
 
-struct property
+namespace muscr
 {
-    std::string name_;
-    std::string value_;
-};
+    struct property
+    {
+        std::string name_;
+        std::string value_;
+    };
+} // namespace muscr
+
 
 BOOST_FUSION_ADAPT_STRUCT
 (
-    property,
+    muscr::property,
     name_,
     value_
 )

@@ -147,7 +147,7 @@ TEST_CASE("simple match - 3", "[leadsheet property]")
     );
     */
 
-    std::vector<property> propVec;
+    std::vector<muscr::property> propVec;
 
     auto prop_matcher = [&propVec](auto begin, auto end) {
         bool r = qi::parse(
@@ -195,7 +195,7 @@ TEST_CASE("simple match - 4", "[leadsheet property]")
     using qi::eol;
     using qi::lexeme;
 
-    std::vector<property> propVec;
+    std::vector<muscr::property> propVec;
 
     auto prop_matcher = [&propVec](auto begin, auto end) {
         bool r = qi::phrase_parse(
