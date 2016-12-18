@@ -18,7 +18,8 @@ set(SOURCE_FILES
         main.cpp
         parser/parser_test.cpp
         parser/lex_test.cpp
-        parser/qi_test.cpp)
+        parser/qi_test.cpp
+        parser/leadsheet_property_test.cpp)
 
 add_executable(muscr_parser_test ${SOURCE_FILES})
 
