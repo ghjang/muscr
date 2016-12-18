@@ -8,19 +8,6 @@
 #include "../../include/utility.h"
 
 
-/*
-@title: A Sample Song
-@author: ghjang
-
-@scale: C Major
-@pitchRange: 3
-@clef: G
-
-@timeSignature: 4 / 4
-@bpm: 100
-    std::string str(read_from_file("/Users/gilhojang/GitHub/muscr/muscr/etc/sample_leadsheet_property.muscr"));
- */
-
 TEST_CASE("simple match", "[leadsheet property]")
 {
     using namespace boost::spirit;
@@ -144,19 +131,6 @@ TEST_CASE("simple match - 2", "[leadsheet property]")
     REQUIRE(boost::fusion::at_c<0>(propVec[6]) == "bpm");
     REQUIRE(boost::fusion::at_c<1>(propVec[6]) == " 100");
 }
-
-struct property
-{
-    std::string name_;
-    std::string value_;
-};
-
-BOOST_FUSION_ADAPT_STRUCT
-(
-    property,
-    name_,
-    value_
-)
 
 TEST_CASE("simple match - 3", "[leadsheet property]")
 {
