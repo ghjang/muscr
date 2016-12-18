@@ -28,3 +28,5 @@ muscr/test/debug/*
 .vscode/.browse.VC.db-wal
 
 .vscode/.browse.VC.db-shm
+
+muscr/test/build
