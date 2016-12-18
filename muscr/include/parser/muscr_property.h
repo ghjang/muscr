@@ -52,13 +52,13 @@ namespace muscr
         using qi::lexeme;
 
         template <typename Iterator>
-        qi::rule<Iterator, muscr::property(), qi::ascii::space_type> prop{
+        qi::rule<Iterator, muscr::property(), qi::ascii::space_type> prop_str_val{
             '@' >> muscr::prop_name<Iterator> >> ':' >> lexeme[+(char_ - eol)]
         };
     } // namespace detail
 
     template <typename Iterator>
-    auto prop{ detail::prop<Iterator> };
+    auto prop_str_val{ detail::prop_str_val<Iterator> };
 } // namespace muscr
 
 

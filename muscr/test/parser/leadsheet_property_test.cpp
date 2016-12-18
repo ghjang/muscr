@@ -242,7 +242,7 @@ TEST_CASE("rule match", "[leadsheet property]")
     std::vector<muscr::property> propVec;
 
     auto prop_matcher = [&propVec](auto begin, auto end) {
-        auto prop_ = muscr::prop<std::string::iterator>;
+        auto prop_ = muscr::prop_str_val<std::string::iterator>;
         bool r = qi::phrase_parse(
                         begin,
                         end,
