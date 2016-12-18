@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream>
 
+#include <boost/type_index.hpp>
 #include <boost/spirit/include/qi.hpp>
 
 
@@ -47,7 +48,7 @@ namespace tools
         BOOST_SPIRIT_ASSERT_MATCH(spirit::qi::domain, T);
 
         using type = typename attribute_of_parser<T>::type;
-        std::cout << typeid(type).name() << std::endl;
+        std::cout << boost::typeindex::type_id<type>().pretty_name() << '\n';
     }
 
     template <typename T>
@@ -59,7 +60,7 @@ namespace tools
         BOOST_SPIRIT_ASSERT_MATCH(spirit::qi::domain, T);
 
         using type = typename attribute_of_parser<T>::type;
-        os << typeid(type).name() << std::endl;
+        os << boost::typeindex::type_id<type>().pretty_name() << '\n';
     }
 } // namespace tools
 
