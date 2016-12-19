@@ -4,9 +4,12 @@
 
 #include <cstdint>
 #include <set>
+#include <map>
 
 #include <boost/fusion/adapted/struct/define_struct.hpp>
 #include <boost/fusion/include/define_struct.hpp>
+#include <boost/fusion/adapted/std_pair.hpp>
+#include <boost/fusion/include/std_pair.hpp>
 
 #include <boost/spirit/include/phoenix_core.hpp>
 #include <boost/spirit/include/phoenix_operator.hpp>
@@ -53,14 +56,19 @@ namespace muscr
         using qi::eol;
         using qi::lexeme;
 
-        template <typename Iterator, typename SpaceType>
-        qi::rule<Iterator, muscr::property(), SpaceType> prop_str_val{
+        template <typename Iterator, typename SpaceType, typename Attr>
+        qi::rule<Iterator, Attr(), SpaceType> prop_str_val{
             '@' >> muscr::prop_name<Iterator> >> ':' >> lexeme[+(char_ - eol)]
         };
     } // namespace detail
 
-    template <typename Iterator, typename SpaceType = boost::spirit::qi::ascii::space_type>
-    auto prop_str_val{ detail::prop_str_val<Iterator, SpaceType> };
+    template
+    <
+        typename Iterator,
+        typename SpaceType = boost::spirit::qi::ascii::space_type,
+        typename Attr = muscr::property
+    >
+    auto prop_str_val{ detail::prop_str_val<Iterator, SpaceType, Attr> };
 
     template <typename Iterator, typename SpaceType = boost::spirit::qi::ascii::space_type>
     struct global_properties
@@ -102,6 +110,57 @@ namespace muscr
         boost::spirit::qi::rule<
             Iterator,
             std::vector<muscr::property>(),
+            boost::spirit::qi::locals<std::string>,
+            SpaceType
+        > start_;
+
+        std::multiset<std::string> propNames_;
+    };
+
+    template <typename Iterator, typename SpaceType = boost::spirit::qi::ascii::space_type>
+    struct global_properties_map
+            : boost::spirit::qi::grammar<
+                    Iterator,
+                    std::map<std::string, std::string>(),
+                    boost::spirit::qi::locals<std::string>,
+                    SpaceType
+              >
+    {
+        global_properties_map()
+            : global_properties_map::base_type(start_)
+        {
+            namespace qi = boost::spirit::qi;
+            using qi::eps;
+            using namespace qi::labels;
+            namespace phx = boost::phoenix;
+            using phx::at_c;
+            using phx::insert;
+            using phx::count;
+
+            property_ = prop_str_val<Iterator, SpaceType, std::pair<std::string, std::string>>;
+
+            // NOTE: if a semantic action is attached to a parser,
+            //       then no properties are emitted automatically anymore.
+            start_ = *(property_[
+                            _a = at_c<0>(_1),
+                            insert(phx::ref(propNames_), at_c<0>(_1)),
+                            insert(_val, _1) // need to push it manually.
+                       ]
+                       >> eps(
+                            count(phx::ref(propNames_), _a) == 1
+                          )
+                      );
+        }
+
+        boost::spirit::qi::rule<
+            Iterator,
+            std::pair<std::string, std::string>(),
+            SpaceType
+        > property_;
+
+        boost::spirit::qi::rule<
+            Iterator,
+            std::map<std::string, std::string>(),
             boost::spirit::qi::locals<std::string>,
             SpaceType
         > start_;

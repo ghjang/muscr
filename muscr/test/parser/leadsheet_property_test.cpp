@@ -342,3 +342,59 @@ TEST_CASE("rule match - 1", "[leadsheet property]")
     propVec.clear();
     REQUIRE_FALSE(prop_matcher(str.begin(), str.end()));
 }
+
+TEST_CASE("rule match - 2", "[leadsheet property]")
+{
+    using namespace boost::spirit;
+    using muscr::global_properties_map;
+
+    std::map<std::string, std::string> propMap;
+
+    auto prop_matcher = [&propMap](auto begin, auto end) {
+        global_properties_map<std::string::iterator> properties;
+        bool r = qi::phrase_parse(
+                        begin,
+                        end,
+                        properties,
+                        qi::ascii::space,
+                        propMap
+                );
+        return (r && begin == end);
+    };
+
+    std::string str{
+        R"(
+
+@title: A Sample Song
+@author: ghjang
+
+@scale: C Major
+@pitchRange: 3
+@clef: G
+
+@timeSignature: 4 / 4
+@bpm: 100)"     // NOTE: no newline at the last property.
+    };
+    REQUIRE(prop_matcher(str.begin(), str.end()));
+    REQUIRE(propMap.size() == 7);
+
+    REQUIRE("A Sample Song" == propMap["title"]);
+    REQUIRE("100" == propMap["bpm"]);
+
+    str = R"(
+
+@title: A Sample Song
+@author: ghjang
+
+@scale: C Major
+@pitchRange: 3
+@clef: G
+
+@timeSignature: 4 / 4
+@bpm: 100
+
+@timeSignature: 4 / 4)"; // duplicate property name
+
+    propMap.clear();
+    REQUIRE_FALSE(prop_matcher(str.begin(), str.end()));
+}
