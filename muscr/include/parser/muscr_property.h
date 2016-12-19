@@ -2,23 +2,18 @@
 #define MUSCR_PROPERTY_H
 
 
+#include <cstdint>
+
+#include <boost/fusion/adapted/struct/define_struct.hpp>
+#include <boost/fusion/include/define_struct.hpp>
 #include <boost/spirit/include/qi.hpp>
 
 
-namespace muscr
-{
-    struct property
-    {
-        std::string name_;
-        std::string value_;
-    };
-} // namespace muscr
-
-BOOST_FUSION_ADAPT_STRUCT
+BOOST_FUSION_DEFINE_STRUCT
 (
-    muscr::property,
-    name_,
-    value_
+    (muscr), property,
+    (std::string, name_)
+    (std::string, value_)
 )
 
 
@@ -26,7 +21,7 @@ namespace muscr
 {
     namespace detail
     {
-        using namespace boost::spirit;
+        namespace qi = boost::spirit::qi;
         using qi::ascii::string;
 
         template <typename Iterator>
@@ -46,7 +41,7 @@ namespace muscr
 
     namespace detail
     {
-        using namespace boost::spirit;
+        namespace qi = boost::spirit::qi;
         using qi::ascii::char_;
         using qi::eol;
         using qi::lexeme;
