@@ -137,6 +137,7 @@ namespace muscr
             using phx::insert;
             using phx::count;
 
+            // NOTE: a list of std::pair is compatilbe with std::map.
             property_ = prop_str_val<Iterator, SpaceType, std::pair<std::string, std::string>>;
 
             // NOTE: if a semantic action is attached to a parser,
