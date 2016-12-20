@@ -134,6 +134,8 @@ TEST_CASE("division match", "[leadsheet section]")
         "(E, (B, G))",
         "(E, (B, (G, D)))",
         "(E, (B, (G, (D))))",
+        "(E, F, (B, (G, (D))))",
+        "(E, F, (B, (G, (D)))), A, C",
         "(A)"
     };
     for (auto & s : divs) {
