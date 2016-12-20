@@ -20,6 +20,9 @@ namespace muscr
     using qi::lit;
     using qi::char_;
     using qi::string;
+    using qi::alpha;
+    using qi::alnum;
+    using qi::eol;
 
     template <typename Iterator>
     qi::rule<Iterator, std::string()> pitch_class{
@@ -89,7 +92,44 @@ namespace muscr
                 Iterator,
                 SpaceType
         > div_;
-    };        
+    };
+
+    template <typename Iterator, typename SpaceType = qi::ascii::space_type>
+    qi::rule<Iterator, SpaceType> section_line{
+        (division<Iterator, SpaceType>{} % '|')
+    };
+
+    template <typename Iterator, typename SpaceType = qi::ascii::space_type>
+    qi::rule<Iterator, SpaceType> chord_section_line{
+        (chord_division<Iterator, SpaceType>{} % '|')
+    };
+
+    template <typename Iterator, typename SpaceType = qi::ascii::space_type>
+    struct leadsheet_section
+            : qi::grammar<
+                    Iterator,
+                    SpaceType
+              >
+    {
+        leadsheet_section() : leadsheet_section::base_type(section_)
+        {
+            name_ = alpha >> *(alnum | char_("_'"));
+
+            melody_line_ = section_line<Iterator, SpaceType>;
+
+            chord_line_ = chord_section_line<Iterator, SpaceType>;
+
+            section_ = name_ >> lit(":=") >> lit('{')
+                                >> melody_line_ >> eol
+                                >> chord_line_
+                             >> lit('}');
+        }
+
+        qi::rule<Iterator, SpaceType> name_;
+        qi::rule<Iterator, SpaceType> melody_line_;
+        qi::rule<Iterator, SpaceType> chord_line_;
+        qi::rule<Iterator, SpaceType> section_;
+    };
 } // namespace muscr
 
 
