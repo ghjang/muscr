@@ -88,22 +88,22 @@ namespace muscr
             namespace phx = boost::phoenix;
             using phx::at_c;
             using phx::insert;
-            using phx::push_back;
             using phx::count;
 
             property_ = prop_str_val<Iterator, SpaceType>;
 
-            // NOTE: if a semantic action is attached to a parser,
+            // NOTE: If a semantic action is attached to a parser,
             //       then no attributes are emitted automatically anymore.
-            start_ = *(property_[
-                            _a = at_c<0>(_1),
-                            insert(phx::ref(propNames_), at_c<0>(_1)),
-                            push_back(_val, _1) // need to push it manually.
-                       ]
-                       >> eps(
-                            count(phx::ref(propNames_), _a) == 1
-                          )
-                      );
+            //       In that case, you need to insert the attribute data manually
+            //       or use the auto-rule.
+            start_ %= *(property_[
+                                _a = at_c<0>(_1),
+                                insert(phx::ref(propNames_), at_c<0>(_1))
+                        ]
+                        >> eps(
+                                count(phx::ref(propNames_), _a) == 1
+                           )
+                       );
         }
 
         boost::spirit::qi::rule<Iterator, muscr::property(), SpaceType> property_;
@@ -140,17 +140,18 @@ namespace muscr
             // NOTE: a list of std::pair is compatilbe with std::map.
             property_ = prop_str_val<Iterator, SpaceType, std::pair<std::string, std::string>>;
 
-            // NOTE: if a semantic action is attached to a parser,
+            // NOTE: If a semantic action is attached to a parser,
             //       then no attributes are emitted automatically anymore.
-            start_ = *(property_[
-                            _a = at_c<0>(_1),
-                            insert(phx::ref(propNames_), at_c<0>(_1)),
-                            insert(_val, _1) // need to push it manually.
-                       ]
-                       >> eps(
-                            count(phx::ref(propNames_), _a) == 1
-                          )
-                      );
+            //       In that case, you need to insert the attribute data manually
+            //       or use the auto-rule.
+            start_ %= *(property_[
+                                _a = at_c<0>(_1),
+                                insert(phx::ref(propNames_), at_c<0>(_1))
+                        ]
+                        >> eps(
+                                count(phx::ref(propNames_), _a) == 1
+                           )
+                       );
         }
 
         boost::spirit::qi::rule<
