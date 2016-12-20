@@ -95,16 +95,6 @@ namespace muscr
     };
 
     template <typename Iterator, typename SpaceType = qi::ascii::space_type>
-    qi::rule<Iterator, SpaceType> section_line{
-        (division<Iterator, SpaceType>{} % '|')
-    };
-
-    template <typename Iterator, typename SpaceType = qi::ascii::space_type>
-    qi::rule<Iterator, SpaceType> chord_section_line{
-        (chord_division<Iterator, SpaceType>{} % '|')
-    };
-
-    template <typename Iterator, typename SpaceType = qi::ascii::space_type>
     struct leadsheet_section
             : qi::grammar<
                     Iterator,
@@ -115,17 +105,19 @@ namespace muscr
         {
             name_ = alpha >> *(alnum | char_("_'"));
 
-            melody_line_ = section_line<Iterator, SpaceType>;
+            melody_line_ = division_ % '|';
 
-            chord_line_ = chord_section_line<Iterator, SpaceType>;
+            chord_line_ = chord_division_ % '|';
 
             section_ = name_ >> lit(":=") >> lit('{')
-                                >> melody_line_ >> eol
+                                >> melody_line_
                                 >> chord_line_
                              >> lit('}');
         }
 
         qi::rule<Iterator, SpaceType> name_;
+        division<Iterator, SpaceType> division_;
+        chord_division<Iterator, SpaceType> chord_division_;
         qi::rule<Iterator, SpaceType> melody_line_;
         qi::rule<Iterator, SpaceType> chord_line_;
         qi::rule<Iterator, SpaceType> section_;
