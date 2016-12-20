@@ -9,19 +9,24 @@
 
 namespace muscr
 {
-    namespace detail
-    {
-        namespace qi = boost::spirit::qi;
-        using qi::char_;
-
-        template <typename Iterator>
-        qi::rule<Iterator, std::string()> pitch_class{
-            char_("CDEFGAB") >> -char_("#b")    
-        };
-    } // namespace detail
+    namespace qi = boost::spirit::qi;
+    using qi::string;
+    using qi::char_;
 
     template <typename Iterator>
-    auto pitch_class{ detail::pitch_class<Iterator> };
+    qi::rule<Iterator, std::string()> pitch_class{
+        char_("CDEFGAB") >> -char_("#b")    
+    };
+
+    template <typename Iterator>
+    qi::rule<Iterator, std::string()> triad_chord{
+        pitch_class<Iterator> >> -char_('m')
+    };
+
+    template <typename Iterator>
+    qi::rule<Iterator, std::string()> seventh_chord{
+        triad_chord<Iterator> >> (string("M7") | char_('7'))
+    };
 } // namespace muscr
 
 
