@@ -34,3 +34,39 @@ TEST_CASE("pitch class match", "[leadsheet section]")
         REQUIRE_FALSE(pc_matcher(s));
     }
 }
+
+TEST_CASE("triad chord match", "[leadsheet section]")
+{
+    namespace qi = boost::spirit::qi;
+    using muscr::triad_chord;
+    
+    auto chord_matcher = [](auto & s) {
+        auto triad = triad_chord<std::string::iterator>;
+        auto begin = s.begin();
+        auto end = s.end();
+        bool r = qi::parse(begin, end, triad);
+        return (r && begin == end);
+    };
+
+    std::string chords[] = {
+        "C",   "D",   "E",   "F",   "G",   "A",   "B",
+        "C#",  "D#",  "E#",  "F#",  "G#",  "A#",  "B#",
+        "Cb",  "Db",  "Eb",  "Fb",  "Gb",  "Ab",  "Bb",
+        "Cm",  "Dm",  "Em",  "Fm",  "Gm",  "Am",  "Bm",
+        "C#m", "D#m", "E#m", "F#m", "G#m", "A#m", "B#m",
+        "Cbm", "Dbm", "Ebm", "Fbm", "Gbm", "Abm", "Bbm"
+    };
+
+    for (auto & s : chords) {
+        REQUIRE(chord_matcher(s));
+    }
+
+    std::string wrongChords[] = {
+        "Z", "CM", "C#z", "c#m", "C#M", "CbM"
+    };
+
+    for (auto & s : wrongChords) {
+        REQUIRE_FALSE(chord_matcher(s));
+    }
+}
+
