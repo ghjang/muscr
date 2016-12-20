@@ -4,8 +4,8 @@
 #include <vector>
 #include <iostream>
 
-#include "../../include/parser/muscr_property.h"
-#include "../../include/utility.h"
+#include "muscr/include/parser/muscr_property.h"
+#include "muscr/include/utility.h"
 
 
 TEST_CASE("simple match", "[leadsheet property]")
