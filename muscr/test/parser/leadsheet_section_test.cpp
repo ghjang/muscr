@@ -133,6 +133,7 @@ TEST_CASE("division match", "[leadsheet section]")
         "(C, D)",
         "(E, (B, G))",
         "(E, (B, (G, D)))",
+        "(E, (B, (G, (D))))",
         "(A)"
     };
     for (auto & s : divs) {
@@ -140,16 +141,15 @@ TEST_CASE("division match", "[leadsheet section]")
     }
 
     std::string wrongDivs[] = {
-        //"C,, D",
-        //"E, B, G)",
-
-        //"A,",
-        
-        //"((C, D)",
-        //"(E, )B, G))",
-        //",(A)"
+        "C,, D",
+        "E, B, G)",
+        "A,",
+        ",A",
+        "((C, D)",
+        "(E, )B, G))",
+        ",(A)"
     };
     for (auto & s : wrongDivs) {
-        //REQUIRE_FALSE(div_matcher(s));
+        REQUIRE_FALSE(div_matcher(s));
     }
 }
