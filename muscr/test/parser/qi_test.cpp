@@ -308,3 +308,28 @@ TEST_CASE("synthesized parser attribute", "[qi]")
     REQUIRE(scores[2].name_ == "yyyyyy");
     REQUIRE(scores[2].score_[2] == 98);
 }
+
+TEST_CASE("% repeat match", "[qi]")
+{
+    namespace qi = boost::spirit::qi;
+    using qi::lit;
+
+    std::string s = "A,";
+
+    qi::rule<std::string::iterator, qi::ascii::space_type> rule{
+        lit('A') % ','
+    };
+
+    auto begin = s.begin();
+    auto end = s.end();
+    bool r = qi::phrase_parse(begin, end, rule, qi::ascii::space);
+    REQUIRE(r);
+    REQUIRE(begin != end);
+
+    s = "A, A";
+    begin = s.begin();
+    end = s.end();
+    r = qi::phrase_parse(begin, end, rule, qi::ascii::space);
+    REQUIRE(r);
+    REQUIRE(begin == end);
+}
