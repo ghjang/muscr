@@ -112,3 +112,44 @@ TEST_CASE("seventh chord match", "[leadsheet section]")
         REQUIRE_FALSE(chord_matcher(s));
     }
 }
+
+TEST_CASE("division match", "[leadsheet section]")
+{
+    namespace qi = boost::spirit::qi;
+    using muscr::division;
+
+    auto div_matcher = [](auto & s) {
+        division<std::string::iterator> div;
+        auto begin = s.begin();
+        auto end = s.end();
+        bool r = qi::phrase_parse(begin, end, div, qi::ascii::space);
+        return (r && begin == end);
+    };
+
+    std::string divs[] = {
+        "C, D",
+        "E, (B, G)",
+        "A",
+        "(C, D)",
+        "(E, (B, G))",
+        "(E, (B, (G, D)))",
+        "(A)"
+    };
+    for (auto & s : divs) {
+        REQUIRE(div_matcher(s));
+    }
+
+    std::string wrongDivs[] = {
+        //"C,, D",
+        //"E, B, G)",
+
+        //"A,",
+        
+        //"((C, D)",
+        //"(E, )B, G))",
+        //",(A)"
+    };
+    for (auto & s : wrongDivs) {
+        //REQUIRE_FALSE(div_matcher(s));
+    }
+}
