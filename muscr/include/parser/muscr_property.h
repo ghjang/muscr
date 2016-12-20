@@ -94,7 +94,7 @@ namespace muscr
             property_ = prop_str_val<Iterator, SpaceType>;
 
             // NOTE: if a semantic action is attached to a parser,
-            //       then no properties are emitted automatically anymore.
+            //       then no attributes are emitted automatically anymore.
             start_ = *(property_[
                             _a = at_c<0>(_1),
                             insert(phx::ref(propNames_), at_c<0>(_1)),
@@ -141,7 +141,7 @@ namespace muscr
             property_ = prop_str_val<Iterator, SpaceType, std::pair<std::string, std::string>>;
 
             // NOTE: if a semantic action is attached to a parser,
-            //       then no properties are emitted automatically anymore.
+            //       then no attributes are emitted automatically anymore.
             start_ = *(property_[
                             _a = at_c<0>(_1),
                             insert(phx::ref(propNames_), at_c<0>(_1)),
