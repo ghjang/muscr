@@ -224,3 +224,95 @@ TEST_CASE("chord division match", "[leadsheet section]")
         REQUIRE_FALSE(div_matcher(s));
     }
 }
+
+TEST_CASE("melody section line match", "[leadsheet section]")
+{
+    namespace qi = boost::spirit::qi;
+    using muscr::division;
+
+    auto line_matcher = [](auto & s) {
+        division<std::string::iterator> div;
+        auto begin = s.begin();
+        auto end = s.end();
+        bool r = qi::phrase_parse(begin, end, div % '|', qi::ascii::space);
+        return (r && begin == end);
+    };
+
+    std::string lines[] = {
+        "C, D | E, (B, G) | A   | A, C",
+    };
+    for (auto & s : lines) {
+        REQUIRE(line_matcher(s));
+    }
+
+    std::string wrongLines[] = {
+        "Z, D | E, (B, G) | A   | A, C",
+        "C, D = E, (B, G) | A   | A, C",
+        "C, D = E, (B, G) | A   | A, C |",
+        "C, D > E, (B, G) | A   | A, C",
+    };
+    for (auto & s : wrongLines) {
+        REQUIRE_FALSE(line_matcher(s));
+    }
+}
+
+TEST_CASE("chord section line match", "[leadsheet section]")
+{
+    namespace qi = boost::spirit::qi;
+    using muscr::chord_division;
+
+    auto line_matcher = [](auto & s) {
+        chord_division<std::string::iterator> div;
+        auto begin = s.begin();
+        auto end = s.end();
+        bool r = qi::phrase_parse(begin, end, div % '|', qi::ascii::space);
+        return (r && begin == end);
+    };
+
+    std::string lines[] = {
+        "C    | Em        | Am  | F",
+        "C    | Em7        | Am  | FM7",
+        "C    | Em, (G7, F)        | Am, CM7  | F",
+    };
+    for (auto & s : lines) {
+        REQUIRE(line_matcher(s));
+    }
+
+    std::string wrongLines[] = {
+        "|C    | Em        | Am  | F",
+        "C    | Em        | Am  | F|",
+        "Z    | Em        | Am  | F",
+        "C    = Em        | Am  | F",
+        "C    = Em        | Am  > F",
+    };
+    for (auto & s : wrongLines) {
+        REQUIRE_FALSE(line_matcher(s));
+    }
+}
+
+TEST_CASE("leadsheet section match", "[leadsheet section]")
+{
+    namespace qi = boost::spirit::qi;
+    using muscr::leadsheet_section;
+
+    auto section_matcher = [](auto & s) {
+        leadsheet_section<std::string::iterator> section;
+        auto begin = s.begin();
+        auto end = s.end();
+        bool r = qi::phrase_parse(begin, end, section, qi::ascii::space);
+        return (r && begin == end);
+    };
+
+    std::string sections[] = {
+        R"(
+A :=
+{
+    C, D | E, (B, G) | A   | A, C
+    C    | Em        | Am  | F
+}
+        )",
+    };
+    for (auto & s : sections) {
+        REQUIRE(section_matcher(s));
+    }
+}
