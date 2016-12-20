@@ -36,6 +36,12 @@ namespace muscr
         triad_chord<Iterator> >> (string("M7") | char_('7'))
     };
 
+    template <typename Iterator>
+    qi::rule<Iterator, std::string()> chord{
+        pitch_class<Iterator>
+            >> -char_('m')
+            >> -(string("M7") | char_('7'))
+    };
 
     template <typename Iterator, typename SpaceType = qi::ascii::space_type>
     struct division
@@ -46,8 +52,6 @@ namespace muscr
     {
         division() : division::base_type(div_)
         {
-            using namespace qi::labels;
-            
             pc_ = pitch_class<Iterator>;
 
             subDiv_ = '(' >> div_ >> ')';
@@ -56,6 +60,30 @@ namespace muscr
         }
 
         qi::rule<Iterator, std::string()> pc_;
+        qi::rule<Iterator, SpaceType> subDiv_;
+        qi::rule<
+                Iterator,
+                SpaceType
+        > div_;
+    };        
+
+    template <typename Iterator, typename SpaceType = qi::ascii::space_type>
+    struct chord_division
+            : qi::grammar<
+                    Iterator,
+                    SpaceType
+              >
+    {
+        chord_division() : chord_division::base_type(div_)
+        {
+            chord_ = chord<Iterator>;
+
+            subDiv_ = '(' >> div_ >> ')';
+
+            div_ = (chord_ | subDiv_) % ',';
+        }
+
+        qi::rule<Iterator, std::string()> chord_;
         qi::rule<Iterator, SpaceType> subDiv_;
         qi::rule<
                 Iterator,

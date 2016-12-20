@@ -113,13 +113,13 @@ TEST_CASE("seventh chord match", "[leadsheet section]")
     }
 }
 
-TEST_CASE("division match", "[leadsheet section]")
+TEST_CASE("melody division match", "[leadsheet section]")
 {
     namespace qi = boost::spirit::qi;
     using muscr::division;
 
     auto div_matcher = [](auto & s) {
-        division<std::string::iterator> div;
+        division<std::string::iterator> div; // melody division
         auto begin = s.begin();
         auto end = s.end();
         bool r = qi::phrase_parse(begin, end, div, qi::ascii::space);
@@ -148,6 +148,75 @@ TEST_CASE("division match", "[leadsheet section]")
         "A,",
         ",A",
         "((C, D)",
+        "(E, )B, G))",
+        ",(A)",
+        "Am7",
+        "G7",
+        "Am7, G7"
+    };
+    for (auto & s : wrongDivs) {
+        REQUIRE_FALSE(div_matcher(s));
+    }
+}
+
+TEST_CASE("chord division match", "[leadsheet section]")
+{
+    namespace qi = boost::spirit::qi;
+    using muscr::chord_division;
+
+    auto div_matcher = [](auto & s) {
+        chord_division<std::string::iterator> div;
+        auto begin = s.begin();
+        auto end = s.end();
+        bool r = qi::phrase_parse(begin, end, div, qi::ascii::space);
+        return (r && begin == end);
+    };
+
+    std::string divs[] = {
+        "C, D",
+        "E, (B, G)",
+        "A",
+        "(C, D)",
+        "(E, (B, G))",
+        "(E, (B, (G, D)))",
+        "(E, (B, (G, (D))))",
+        "(E, F, (B, (G, (D))))",
+        "(E, F, (B, (G, (D)))), A, C",
+        "(A)",
+
+        "Dm",
+        "Dm, Am, A, (G, Gm), F",
+        "D7",
+        "C, D7",
+        "E, (Bm7, G)",
+        "A",
+        "(C, D)",
+        "(E, (BM7, G))",
+        "(E, (Bm, (G, D)))",
+        "(E, (B, (G, (D))))",
+        "(E, Fm, (B, (G7, (Dm))))",
+        "(E, F, (B, (G, (D)))), A, Cm7",
+        "(E, Fm, (BM7, (G, (DM7)))), A, Cm7",
+        "(Am7)"
+    };
+    for (auto & s : divs) {
+        REQUIRE(div_matcher(s));
+    }
+
+    std::string wrongDivs[] = {
+        "C,, D",
+        "E, B, G)",
+        "A,",
+        ",A",
+        "((C, D)",
+        "(E, )B, G))",
+        ",(A)"
+
+        "C,, D",
+        "E, BM7, G)",
+        "A,",
+        ",A",
+        "((C7, D)",
         "(E, )B, G))",
         ",(A)"
     };
