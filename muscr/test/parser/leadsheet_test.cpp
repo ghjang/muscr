@@ -3,7 +3,7 @@
 #include "muscr/include/parser/muscr_leadsheet.h"
 
 
-TEST_CASE("leadsheet match", "[leadsheet]")
+TEST_CASE("leadsheet score match", "[leadsheet score]")
 {
 
 }
