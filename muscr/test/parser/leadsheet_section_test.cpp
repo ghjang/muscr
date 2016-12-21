@@ -258,4 +258,31 @@ A :=
     for (auto & s : sections) {
         REQUIRE(test_phrase_parser(s, section));
     }
+
+    std::string wrongSections[] = {
+        R"(
+A :=
+<
+    C, D | E, (B, G) | A   | A, C
+    C    | Em        | Am  | F
+}
+        )",        
+        R"(
+A =
+<
+    C, D | E, (B, G) | A   | A, C
+    C    | Em        | Am  | F
+}
+        )",        
+        R"(
+A =
+<
+    C, D | E, (B, G) | A    A, C
+    C    | Em        | Am  | F
+}
+        )",        
+    };
+    for (auto & s : wrongSections) {
+        REQUIRE_FALSE(test_phrase_parser(s, section));
+    }
 }
