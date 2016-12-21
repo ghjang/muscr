@@ -62,6 +62,26 @@ namespace tools
         using type = typename attribute_of_parser<T>::type;
         os << boost::typeindex::type_id<type>().pretty_name() << '\n';
     }
+
+    template <typename Parser>
+    bool test_parser(std::string & s, Parser const& p, bool fullMatch = true)
+    {
+        namespace qi = boost::spirit::qi;
+        auto begin = s.begin();
+        auto end = s.end();
+        bool r = qi::parse(begin, end, p);
+        return (r && (!fullMatch || (begin == end)));
+    }
+
+    template <typename Parser>
+    bool test_phrase_parser(std::string & s, Parser const& p, bool fullMatch = true)
+    {
+        namespace qi = boost::spirit::qi;
+        auto begin = s.begin();
+        auto end = s.end();
+        bool r = qi::phrase_parse(begin, end, p, qi::ascii::space);
+        return (r && (!fullMatch || (begin == end)));
+    }
 } // namespace tools
 
 

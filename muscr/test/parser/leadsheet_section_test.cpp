@@ -2,20 +2,13 @@
 
 #include "muscr/include/parser/muscr_section.h"
 
+#include "muscr/include/utility.h"
+
 
 TEST_CASE("pitch class match", "[leadsheet section]")
 {
-    namespace qi = boost::spirit::qi;
     using muscr::pitch_class;
-
-
-    auto pc_matcher = [](auto & s) {
-        auto pc = pitch_class<std::string::iterator>;
-        auto begin = s.begin();
-        auto end = s.end();
-        bool r = qi::parse(begin, end, pc);
-        return (r && begin == end);
-    };
+    using tools::test_parser;
 
     std::string pcs[] = {
         "C",  "D",  "E",  "F",  "G",  "A",  "B",
@@ -23,7 +16,7 @@ TEST_CASE("pitch class match", "[leadsheet section]")
         "Cb", "Db", "Eb", "Fb", "Gb", "Ab", "Bb"
     };
     for (auto & s : pcs) {
-        REQUIRE(pc_matcher(s));
+        REQUIRE(test_parser(s, pitch_class<std::string::iterator>));
     }
 
     std::string wrongPcs[] = {
@@ -31,23 +24,15 @@ TEST_CASE("pitch class match", "[leadsheet section]")
     };
 
     for (auto & s : wrongPcs) {
-        REQUIRE_FALSE(pc_matcher(s));
+        REQUIRE_FALSE(test_parser(s, pitch_class<std::string::iterator>));
     }
 }
 
 TEST_CASE("triad chord match", "[leadsheet section]")
 {
-    namespace qi = boost::spirit::qi;
     using muscr::triad_chord;
+    using tools::test_parser;
     
-    auto chord_matcher = [](auto & s) {
-        auto triad = triad_chord<std::string::iterator>;
-        auto begin = s.begin();
-        auto end = s.end();
-        bool r = qi::parse(begin, end, triad);
-        return (r && begin == end);
-    };
-
     std::string chords[] = {
         "C",   "D",   "E",   "F",   "G",   "A",   "B",
         "C#",  "D#",  "E#",  "F#",  "G#",  "A#",  "B#",
@@ -58,7 +43,7 @@ TEST_CASE("triad chord match", "[leadsheet section]")
     };
 
     for (auto & s : chords) {
-        REQUIRE(chord_matcher(s));
+        REQUIRE(test_parser(s, triad_chord<std::string::iterator>));
     }
 
     std::string wrongChords[] = {
@@ -66,23 +51,15 @@ TEST_CASE("triad chord match", "[leadsheet section]")
     };
 
     for (auto & s : wrongChords) {
-        REQUIRE_FALSE(chord_matcher(s));
+        REQUIRE_FALSE(test_parser(s, triad_chord<std::string::iterator>));
     }
 }
 
 TEST_CASE("seventh chord match", "[leadsheet section]")
 {
-    namespace qi = boost::spirit::qi;
     using muscr::seventh_chord;
+    using tools::test_parser;
     
-    auto chord_matcher = [](auto & s) {
-        auto seventh = seventh_chord<std::string::iterator>;
-        auto begin = s.begin();
-        auto end = s.end();
-        bool r = qi::parse(begin, end, seventh);
-        return (r && begin == end);
-    };
-
     std::string chords[] = {
         "C7",   "D7",   "E7",   "F7",   "G7",   "A7",   "B7",
         "C#7",  "D#7",  "E#7",  "F#7",  "G#7",  "A#7",  "B#7",
@@ -100,7 +77,7 @@ TEST_CASE("seventh chord match", "[leadsheet section]")
     };
 
     for (auto & s : chords) {
-        REQUIRE(chord_matcher(s));
+        REQUIRE(test_parser(s, seventh_chord<std::string::iterator>));
     }
 
     std::string wrongChords[] = {
@@ -109,22 +86,14 @@ TEST_CASE("seventh chord match", "[leadsheet section]")
     };
 
     for (auto & s : wrongChords) {
-        REQUIRE_FALSE(chord_matcher(s));
+        REQUIRE_FALSE(test_parser(s, seventh_chord<std::string::iterator>));
     }
 }
 
 TEST_CASE("melody division match", "[leadsheet section]")
 {
-    namespace qi = boost::spirit::qi;
     using muscr::division;
-
-    auto div_matcher = [](auto & s) {
-        division<std::string::iterator> div; // melody division
-        auto begin = s.begin();
-        auto end = s.end();
-        bool r = qi::phrase_parse(begin, end, div, qi::ascii::space);
-        return (r && begin == end);
-    };
+    using tools::test_phrase_parser;
 
     std::string divs[] = {
         "C, D",
@@ -139,7 +108,7 @@ TEST_CASE("melody division match", "[leadsheet section]")
         "(A)"
     };
     for (auto & s : divs) {
-        REQUIRE(div_matcher(s));
+        REQUIRE(test_phrase_parser(s, division<std::string::iterator>{}));
     }
 
     std::string wrongDivs[] = {
@@ -155,22 +124,14 @@ TEST_CASE("melody division match", "[leadsheet section]")
         "Am7, G7"
     };
     for (auto & s : wrongDivs) {
-        REQUIRE_FALSE(div_matcher(s));
+        REQUIRE_FALSE(test_phrase_parser(s, division<std::string::iterator>{}));
     }
 }
 
 TEST_CASE("chord division match", "[leadsheet section]")
 {
-    namespace qi = boost::spirit::qi;
     using muscr::chord_division;
-
-    auto div_matcher = [](auto & s) {
-        chord_division<std::string::iterator> div;
-        auto begin = s.begin();
-        auto end = s.end();
-        bool r = qi::phrase_parse(begin, end, div, qi::ascii::space);
-        return (r && begin == end);
-    };
+    using tools::test_phrase_parser;
 
     std::string divs[] = {
         "C, D",
@@ -200,7 +161,7 @@ TEST_CASE("chord division match", "[leadsheet section]")
         "(Am7)"
     };
     for (auto & s : divs) {
-        REQUIRE(div_matcher(s));
+        REQUIRE(test_phrase_parser(s, chord_division<std::string::iterator>{}));
     }
 
     std::string wrongDivs[] = {
@@ -221,28 +182,22 @@ TEST_CASE("chord division match", "[leadsheet section]")
         ",(A)"
     };
     for (auto & s : wrongDivs) {
-        REQUIRE_FALSE(div_matcher(s));
+        REQUIRE_FALSE(test_phrase_parser(s, chord_division<std::string::iterator>{}));
     }
 }
 
 TEST_CASE("melody section line match", "[leadsheet section]")
 {
-    namespace qi = boost::spirit::qi;
     using muscr::division;
+    using tools::test_phrase_parser;
 
-    auto line_matcher = [](auto & s) {
-        division<std::string::iterator> div;
-        auto begin = s.begin();
-        auto end = s.end();
-        bool r = qi::phrase_parse(begin, end, div % '|', qi::ascii::space);
-        return (r && begin == end);
-    };
+    division<std::string::iterator> div;
 
     std::string lines[] = {
         "C, D | E, (B, G) | A   | A, C",
     };
     for (auto & s : lines) {
-        REQUIRE(line_matcher(s));
+        REQUIRE(test_phrase_parser(s, div % '|'));
     }
 
     std::string wrongLines[] = {
@@ -252,22 +207,16 @@ TEST_CASE("melody section line match", "[leadsheet section]")
         "C, D > E, (B, G) | A   | A, C",
     };
     for (auto & s : wrongLines) {
-        REQUIRE_FALSE(line_matcher(s));
+        REQUIRE_FALSE(test_phrase_parser(s, div % '|'));
     }
 }
 
 TEST_CASE("chord section line match", "[leadsheet section]")
 {
-    namespace qi = boost::spirit::qi;
     using muscr::chord_division;
+    using tools::test_phrase_parser;
 
-    auto line_matcher = [](auto & s) {
-        chord_division<std::string::iterator> div;
-        auto begin = s.begin();
-        auto end = s.end();
-        bool r = qi::phrase_parse(begin, end, div % '|', qi::ascii::space);
-        return (r && begin == end);
-    };
+    chord_division<std::string::iterator> div;
 
     std::string lines[] = {
         "C    | Em        | Am  | F",
@@ -275,7 +224,7 @@ TEST_CASE("chord section line match", "[leadsheet section]")
         "C    | Em, (G7, F)        | Am, CM7  | F",
     };
     for (auto & s : lines) {
-        REQUIRE(line_matcher(s));
+        REQUIRE(test_phrase_parser(s, div % '|'));
     }
 
     std::string wrongLines[] = {
@@ -286,22 +235,16 @@ TEST_CASE("chord section line match", "[leadsheet section]")
         "C    = Em        | Am  > F",
     };
     for (auto & s : wrongLines) {
-        REQUIRE_FALSE(line_matcher(s));
+        REQUIRE_FALSE(test_phrase_parser(s, div % '|'));
     }
 }
 
 TEST_CASE("leadsheet section match", "[leadsheet section]")
 {
-    namespace qi = boost::spirit::qi;
     using muscr::leadsheet_section;
+    using tools::test_phrase_parser;
 
-    auto section_matcher = [](auto & s) {
-        leadsheet_section<std::string::iterator> section;
-        auto begin = s.begin();
-        auto end = s.end();
-        bool r = qi::phrase_parse(begin, end, section, qi::ascii::space);
-        return (r && begin == end);
-    };
+    leadsheet_section<std::string::iterator> section;
 
     std::string sections[] = {
         R"(
@@ -313,6 +256,6 @@ A :=
         )",
     };
     for (auto & s : sections) {
-        REQUIRE(section_matcher(s));
+        REQUIRE(test_phrase_parser(s, section));
     }
 }
