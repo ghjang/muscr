@@ -10,20 +10,12 @@
 
 TEST_CASE("simple match", "[leadsheet property]")
 {
-    using namespace boost::spirit;
+    namespace qi = boost::spirit::qi;
     using qi::ascii::alpha;
     using qi::ascii::char_;
     using qi::ascii::blank;
     using qi::eol;
-
-    auto prop_matcher = [](auto begin, auto end) {
-        bool r = qi::parse(
-                        begin,
-                        end,
-                        *(blank | eol) >> '@' >> +alpha >> ':' >> +(char_ - eol)
-                );
-        return r;
-    };
+    using tools::test_parser;
 
     std::string strArr[] = {
         "@title: A Sample Song\n",
@@ -43,30 +35,22 @@ TEST_CASE("simple match", "[leadsheet property]")
         )"
     };
     for (std::string & s : strArr) {
-        bool matchResult = prop_matcher(s.begin(), s.end());
-        if (!matchResult) {
-            std::cerr << "failed to match: " << s << '\n';
-        }
-        REQUIRE(matchResult);
+        REQUIRE(test_parser(
+                    s,
+                    *(blank | eol) >> '@' >> +alpha >> ':' >> +(char_ - eol),
+                    false
+                ));
     }
 }
 
 TEST_CASE("simple match - 1", "[leadsheet property]")
 {
-    using namespace boost::spirit;
+    namespace qi = boost::spirit::qi;
     using qi::ascii::alpha;
     using qi::ascii::char_;
     using qi::ascii::blank;
     using qi::eol;
-
-    auto prop_matcher = [](auto begin, auto end) {
-        bool r = qi::parse(
-                        begin,
-                        end,
-                        *(*(blank | eol) >> '@' >> +alpha >> ':' >> +(char_ - eol))
-                );
-        return (r && begin == end);
-    };
+    using tools::test_parser;
 
     std::string str{
         R"(
@@ -81,12 +65,16 @@ TEST_CASE("simple match - 1", "[leadsheet property]")
 @timeSignature: 4 / 4
 @bpm: 100)"     // NOTE: no newline at the last property.
     };
-    REQUIRE(prop_matcher(str.begin(), str.end()));
+    REQUIRE(test_parser(
+                str,
+                *(*(blank | eol) >> '@' >> +alpha >> ':' >> +(char_ - eol)),
+                false
+            ));
 }
 
 TEST_CASE("simple match - 2", "[leadsheet property]")
 {
-    using namespace boost::spirit;
+    namespace qi = boost::spirit::qi;
     using qi::ascii::alpha;
     using qi::ascii::char_;
     using qi::ascii::blank;
@@ -134,7 +122,7 @@ TEST_CASE("simple match - 2", "[leadsheet property]")
 
 TEST_CASE("simple match - 3", "[leadsheet property]")
 {
-    using namespace boost::spirit;
+    namespace qi = boost::spirit::qi;
     using qi::ascii::alpha;
     using qi::ascii::char_;
     using qi::ascii::blank;
@@ -188,7 +176,7 @@ TEST_CASE("simple match - 3", "[leadsheet property]")
 
 TEST_CASE("simple match - 4", "[leadsheet property]")
 {
-    using namespace boost::spirit;
+    namespace qi = boost::spirit::qi;
     using qi::ascii::alpha;
     using qi::ascii::char_;
     using qi::ascii::blank;
@@ -237,7 +225,7 @@ TEST_CASE("simple match - 4", "[leadsheet property]")
 
 TEST_CASE("rule match", "[leadsheet property]")
 {
-    using namespace boost::spirit;
+    namespace qi = boost::spirit::qi;
 
     std::vector<muscr::property> propVec;
 
@@ -282,7 +270,7 @@ TEST_CASE("rule match", "[leadsheet property]")
 
 TEST_CASE("rule match - 1", "[leadsheet property]")
 {
-    using namespace boost::spirit;
+    namespace qi = boost::spirit::qi;
     using muscr::global_properties;
 
     std::vector<muscr::property> propVec;
@@ -345,7 +333,7 @@ TEST_CASE("rule match - 1", "[leadsheet property]")
 
 TEST_CASE("rule match - 2", "[leadsheet property]")
 {
-    using namespace boost::spirit;
+    namespace qi = boost::spirit::qi;
     using muscr::global_properties_map;
 
     std::map<std::string, std::string> propMap;
