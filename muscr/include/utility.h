@@ -82,6 +82,26 @@ namespace tools
         bool r = qi::phrase_parse(begin, end, p, qi::ascii::space);
         return (r && (!fullMatch || (begin == end)));
     }
+
+    template <typename Parser, typename Attr>
+    bool test_parser_attr(std::string & s, Parser const& p, Attr & a, bool fullMatch = true)
+    {
+        namespace qi = boost::spirit::qi;
+        auto begin = s.begin();
+        auto end = s.end();
+        bool r = qi::parse(begin, end, p, a);
+        return (r && (!fullMatch || (begin == end)));
+    }
+
+    template <typename Parser, typename Attr>
+    bool test_phrase_parser_attr(std::string & s, Parser const& p, Attr & a, bool fullMatch = true)
+    {
+        namespace qi = boost::spirit::qi;
+        auto begin = s.begin();
+        auto end = s.end();
+        bool r = qi::phrase_parse(begin, end, p, qi::ascii::space, a);
+        return (r && (!fullMatch || (begin == end)));
+    }
 } // namespace tools
 
 

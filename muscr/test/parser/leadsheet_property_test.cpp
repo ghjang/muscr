@@ -67,8 +67,7 @@ TEST_CASE("simple match - 1", "[leadsheet property]")
     };
     REQUIRE(test_parser(
                 str,
-                *(*(blank | eol) >> '@' >> +alpha >> ':' >> +(char_ - eol)),
-                false
+                *(*(blank | eol) >> '@' >> +alpha >> ':' >> +(char_ - eol))
             ));
 }
 
@@ -80,24 +79,13 @@ TEST_CASE("simple match - 2", "[leadsheet property]")
     using qi::ascii::blank;
     using qi::eol;
     using qi::omit;
+    using tools::test_parser_attr;
 
     /*
     tools::display_attribute_of_parser(
         *(omit[*(blank | eol)] >> '@' >> +alpha >> ':' >> +(char_ - eol))
     );
     */
-
-    std::vector<boost::fusion::vector<std::string, std::string>> propVec;
-
-    auto prop_matcher = [&propVec](auto begin, auto end) {
-        bool r = qi::parse(
-                        begin,
-                        end,
-                        *(omit[*(blank | eol)] >> '@' >> +alpha >> ':' >> +(char_ - eol)),
-                        propVec
-                );
-        return (r && begin == end);
-    };
 
     std::string str{
         R"(
@@ -112,7 +100,15 @@ TEST_CASE("simple match - 2", "[leadsheet property]")
 @timeSignature: 4 / 4
 @bpm: 100)"     // NOTE: no newline at the last property.
     };
-    REQUIRE(prop_matcher(str.begin(), str.end()));
+
+    std::vector<boost::fusion::vector<std::string, std::string>> propVec;
+
+    REQUIRE(test_parser_attr(
+                str,
+                *(omit[*(blank | eol)] >> '@' >> +alpha >> ':' >> +(char_ - eol)),
+                propVec
+            ));
+
     REQUIRE(propVec.size() == 7);
     REQUIRE(boost::fusion::at_c<0>(propVec[0]) == "title");
     REQUIRE(boost::fusion::at_c<1>(propVec[0]) == " A Sample Song");
@@ -128,24 +124,13 @@ TEST_CASE("simple match - 3", "[leadsheet property]")
     using qi::ascii::blank;
     using qi::eol;
     using qi::omit;
+    using tools::test_parser_attr;
 
     /*
     tools::display_attribute_of_parser(
         *(omit[*(blank | eol)] >> '@' >> +alpha >> ':' >> +(char_ - eol))
     );
     */
-
-    std::vector<muscr::property> propVec;
-
-    auto prop_matcher = [&propVec](auto begin, auto end) {
-        bool r = qi::parse(
-                        begin,
-                        end,
-                        *(omit[*(blank | eol)] >> '@' >> +alpha >> ':' >> +(char_ - eol)),
-                        propVec
-                );
-        return (r && begin == end);
-    };
 
     std::string str{
         R"(
@@ -160,7 +145,15 @@ TEST_CASE("simple match - 3", "[leadsheet property]")
 @timeSignature: 4 / 4
 @bpm: 100)"     // NOTE: no newline at the last property.
     };
-    REQUIRE(prop_matcher(str.begin(), str.end()));
+
+    std::vector<muscr::property> propVec;
+
+    REQUIRE(test_parser_attr(
+                str,
+                *(omit[*(blank | eol)] >> '@' >> +alpha >> ':' >> +(char_ - eol)),
+                propVec
+            ));
+    
     REQUIRE(propVec.size() == 7);
 
     REQUIRE(boost::fusion::at_c<0>(propVec[0]) == "title");
@@ -182,19 +175,7 @@ TEST_CASE("simple match - 4", "[leadsheet property]")
     using qi::ascii::blank;
     using qi::eol;
     using qi::lexeme;
-
-    std::vector<muscr::property> propVec;
-
-    auto prop_matcher = [&propVec](auto begin, auto end) {
-        bool r = qi::phrase_parse(
-                        begin,
-                        end,
-                        *('@' >> +alpha >> ':' >> lexeme[+(char_ - eol)]),
-                        qi::ascii::space,
-                        propVec
-                );
-        return (r && begin == end);
-    };
+    using tools::test_phrase_parser_attr;
 
     std::string str{
         R"(
@@ -209,7 +190,15 @@ TEST_CASE("simple match - 4", "[leadsheet property]")
 @timeSignature: 4 / 4
 @bpm: 100)"     // NOTE: no newline at the last property.
     };
-    REQUIRE(prop_matcher(str.begin(), str.end()));
+
+    std::vector<muscr::property> propVec;
+
+    REQUIRE(test_phrase_parser_attr(
+                str,
+                *('@' >> +alpha >> ':' >> lexeme[+(char_ - eol)]),
+                propVec
+            ));
+    
     REQUIRE(propVec.size() == 7);
 
     REQUIRE(boost::fusion::at_c<0>(propVec[0]) == "title");
@@ -226,20 +215,7 @@ TEST_CASE("simple match - 4", "[leadsheet property]")
 TEST_CASE("rule match", "[leadsheet property]")
 {
     namespace qi = boost::spirit::qi;
-
-    std::vector<muscr::property> propVec;
-
-    auto prop_matcher = [&propVec](auto begin, auto end) {
-        auto prop_ = muscr::prop_str_val<std::string::iterator>;
-        bool r = qi::phrase_parse(
-                        begin,
-                        end,
-                        *prop_,
-                        qi::ascii::space,
-                        propVec
-                );
-        return (r && begin == end);
-    };
+    using tools::test_phrase_parser_attr;
 
     std::string str{
         R"(
@@ -254,7 +230,16 @@ TEST_CASE("rule match", "[leadsheet property]")
 @timeSignature: 4 / 4
 @bpm: 100)"     // NOTE: no newline at the last property.
     };
-    REQUIRE(prop_matcher(str.begin(), str.end()));
+
+    auto prop_ = muscr::prop_str_val<std::string::iterator>;
+    std::vector<muscr::property> propVec;
+
+    REQUIRE(test_phrase_parser_attr(
+                str,
+                *prop_,
+                propVec
+            ));
+
     REQUIRE(propVec.size() == 7);
 
     REQUIRE(boost::fusion::at_c<0>(propVec[0]) == "title");
@@ -272,20 +257,7 @@ TEST_CASE("rule match - 1", "[leadsheet property]")
 {
     namespace qi = boost::spirit::qi;
     using muscr::global_properties;
-
-    std::vector<muscr::property> propVec;
-
-    auto prop_matcher = [&propVec](auto begin, auto end) {
-        global_properties<std::string::iterator> properties;
-        bool r = qi::phrase_parse(
-                        begin,
-                        end,
-                        properties,
-                        qi::ascii::space,
-                        propVec
-                );
-        return (r && begin == end);
-    };
+    using tools::test_phrase_parser_attr;
 
     std::string str{
         R"(
@@ -300,7 +272,16 @@ TEST_CASE("rule match - 1", "[leadsheet property]")
 @timeSignature: 4 / 4
 @bpm: 100)"     // NOTE: no newline at the last property.
     };
-    REQUIRE(prop_matcher(str.begin(), str.end()));
+
+    global_properties<std::string::iterator> properties;
+    std::vector<muscr::property> propVec;
+
+    REQUIRE(test_phrase_parser_attr(
+                str,
+                properties,
+                propVec
+            ));
+
     REQUIRE(propVec.size() == 7);
 
     REQUIRE(boost::fusion::at_c<0>(propVec[0]) == "title");
@@ -328,27 +309,19 @@ TEST_CASE("rule match - 1", "[leadsheet property]")
 @timeSignature: 4 / 4)"; // duplicate property name
 
     propVec.clear();
-    REQUIRE_FALSE(prop_matcher(str.begin(), str.end()));
+
+    REQUIRE_FALSE(test_phrase_parser_attr(
+                        str,
+                        properties,
+                        propVec
+                  ));
 }
 
 TEST_CASE("rule match - 2", "[leadsheet property]")
 {
     namespace qi = boost::spirit::qi;
     using muscr::global_properties_map;
-
-    std::map<std::string, std::string> propMap;
-
-    auto prop_matcher = [&propMap](auto begin, auto end) {
-        global_properties_map<std::string::iterator> properties;
-        bool r = qi::phrase_parse(
-                        begin,
-                        end,
-                        properties,
-                        qi::ascii::space,
-                        propMap
-                );
-        return (r && begin == end);
-    };
+    using tools::test_phrase_parser_attr;
 
     std::string str{
         R"(
@@ -363,7 +336,16 @@ TEST_CASE("rule match - 2", "[leadsheet property]")
 @timeSignature: 4 / 4
 @bpm: 100)"     // NOTE: no newline at the last property.
     };
-    REQUIRE(prop_matcher(str.begin(), str.end()));
+
+    global_properties_map<std::string::iterator> properties;
+    std::map<std::string, std::string> propMap;
+
+    REQUIRE(test_phrase_parser_attr(
+                str,
+                properties,
+                propMap
+            ));
+
     REQUIRE(propMap.size() == 7);
 
     REQUIRE("A Sample Song" == propMap["title"]);
@@ -384,5 +366,10 @@ TEST_CASE("rule match - 2", "[leadsheet property]")
 @timeSignature: 4 / 4)"; // duplicate property name
 
     propMap.clear();
-    REQUIRE_FALSE(prop_matcher(str.begin(), str.end()));
+
+    REQUIRE_FALSE(test_phrase_parser_attr(
+                        str,
+                        properties,
+                        propMap
+                  ));
 }
