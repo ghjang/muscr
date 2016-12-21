@@ -21,7 +21,7 @@ set(SOURCE_FILES
         parser/qi_test.cpp
         parser/leadsheet_property_test.cpp
         parser/leadsheet_section_test.cpp
-        parser/leadsheet_test.cpp)
+        parser/leadsheet_score_test.cpp)
 
 add_executable(muscr_parser_test ${SOURCE_FILES})
 
