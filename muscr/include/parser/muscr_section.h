@@ -26,10 +26,11 @@ namespace muscr
     using qi::alpha;
     using qi::alnum;
     using qi::eol;
+    using qi::lexeme;
 
     template <typename Iterator>
     qi::rule<Iterator, std::string()> pitch_class{
-        char_("CDEFGAB") >> -char_("#b")    
+        char_("CDEFGAB") >> -char_("#b")
     };
 
     template <typename Iterator>
@@ -92,14 +93,18 @@ namespace muscr
     {
         chord_division() : chord_division::base_type(div_)
         {
-            chord_ %= chord<Iterator>;
+            chord_ %= lexeme[
+                            char_("CDEFGAB") >> -char_("#b")
+                                >> -char_('m')
+                                >> -(string("M7") | char_('7'))
+                      ];
 
             subDiv_ %= chord_ | '(' >> div_ >> ')';
 
             div_ %= subDiv_ % ',';
         }
 
-        qi::rule<Iterator, std::string()> chord_;
+        qi::rule<Iterator, std::string(), SpaceType> chord_;
         qi::rule<Iterator, subdivision_attr(), SpaceType> subDiv_;
         qi::rule<
                 Iterator,
