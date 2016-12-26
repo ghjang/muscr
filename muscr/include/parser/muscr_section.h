@@ -96,7 +96,7 @@ namespace muscr
             chord_ %= lexeme[
                             char_("CDEFGAB") >> -char_("#b")
                                 >> -char_('m')
-                                >> -(string("M7") | char_('7'))
+                                >> -(-char_('M') >> char_('7'))
                       ];
 
             subDiv_ %= chord_ | '(' >> div_ >> ')';
