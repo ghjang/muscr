@@ -1,10 +1,14 @@
+#include "../catch.hpp"
+
 #include <string>
 #include <vector>
 
 #include <boost/spirit/include/qi.hpp>
-#include <boost/fusion/include/adapt_struct.hpp>
 
-#include "../catch.hpp"
+#include <boost/fusion/include/adapt_struct.hpp>
+#include <boost/variant/recursive_variant.hpp>
+
+#include "muscr/include/utility.h"
 
 
 TEST_CASE("num_list1", "[qi]")
@@ -332,4 +336,127 @@ TEST_CASE("% repeat match", "[qi]")
     r = qi::phrase_parse(begin, end, rule, qi::ascii::space);
     REQUIRE(r);
     REQUIRE(begin == end);
+}
+
+
+namespace client
+{
+    struct recursive_match_attr;
+
+    using subelement
+        = std::vector<
+                    boost::variant<
+                        std::string,
+                        boost::recursive_wrapper<recursive_match_attr>
+                    >
+          >;
+
+    using element
+        = boost::variant<
+                std::string,
+                subelement
+          >;
+
+    struct recursive_match_attr
+    {
+        std::vector<element> elements_;
+    };
+} // namespace client
+
+BOOST_FUSION_ADAPT_STRUCT(
+    client::recursive_match_attr,
+    (std::vector<client::element>, elements_)
+)
+
+TEST_CASE("recursive match", "[qi]")
+{
+    namespace qi = boost::spirit::qi;
+    using qi::char_;
+
+    struct recursive_match
+        : qi::grammar<std::string::iterator, qi::ascii::space_type>
+    {
+        recursive_match() : recursive_match::base_type(div_)
+        {
+            subdiv_ = '(' >> div_ >> ')';
+            div_ = (char_("A-Z") | subdiv_) % ',';
+        }
+
+        qi::rule<std::string::iterator, qi::ascii::space_type> subdiv_;
+        qi::rule<std::string::iterator, qi::ascii::space_type> div_;
+    };
+
+    std::string s = "A, (B, C), (D, E, (F, G)), H";
+    auto begin = s.begin();
+    auto end = s.end();
+    recursive_match rule_;
+    bool r = qi::phrase_parse(begin, end, rule_, qi::ascii::space);
+    REQUIRE(r);
+    REQUIRE(begin == end);
+}
+
+namespace std
+{
+    // for debug output
+    template <typename T>
+    inline static std::ostream& operator<<(std::ostream& os, std::vector<T> const& v) {
+        os << "(";
+        bool first = true;
+        for (auto & el : v) {
+            (first ? os : os << ", ") << el;
+            first = false;
+        }
+        return os << ")";
+    }
+} // namespace std
+
+namespace Ast
+{
+    using node = boost::make_recursive_variant<
+                            char,
+                            std::vector<boost::recursive_variant_>
+                 >::type;
+
+    using nodes = std::vector<node>;
+} // namespace Ast
+
+template <typename It = std::string::const_iterator>
+struct recursive_match : boost::spirit::qi::grammar<It, Ast::nodes(), boost::spirit::qi::ascii::space_type>
+{
+    recursive_match() : recursive_match::base_type(list_) {
+        using namespace boost::spirit::qi;
+
+        node_ = char_("A-Z") | '(' >> list_ >> ')';
+        list_ = node_ % ',';
+
+        BOOST_SPIRIT_DEBUG_NODES((node_)(list_))
+    }
+
+  private:
+    boost::spirit::qi::rule<It, Ast::node(),  boost::spirit::qi::ascii::space_type> node_;
+    boost::spirit::qi::rule<It, Ast::nodes(), boost::spirit::qi::ascii::space_type> list_;
+};
+
+
+// refter to http://stackoverflow.com/questions/41330814/saving-boost-spirit-recursive-match-results-to-a-c-struct
+TEST_CASE("recursive match attribute", "[qi]")
+{
+    namespace qi = boost::spirit::qi;
+
+    using qi::char_;
+
+    std::string const s = "A, (B, C), (D, E, (F, G)), H";
+    auto begin = s.begin();
+    auto end = s.end();
+    recursive_match<> rule_;
+    Ast::nodes parsed;
+    bool ok = qi::phrase_parse(begin, end, rule_, qi::ascii::space, parsed);
+
+    if (ok)
+        std::cout << "Parsed: " << parsed << "\n";
+    else
+        std::cout << "Parse failed\n";
+
+    if (begin != end)
+        std::cout << "Remaining unparsed input: '" << std::string(begin, end) << "'\n";    
 }
