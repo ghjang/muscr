@@ -211,6 +211,67 @@ TEST_CASE("melody section line match", "[leadsheet section]")
     }
 }
 
+
+struct str_cat : boost::static_visitor<>
+{
+    void operator () (std::string const& s)
+    {
+        str_ += s;
+    }
+
+    template <typename T>
+    void operator () (std::vector<T> const& v)
+    {
+        for (auto & e : v) {
+            boost::apply_visitor(*this, e);
+        }
+    }
+
+    std::string str_;
+};
+
+TEST_CASE("melody section line attribute", "[leadsheet section]")
+{
+    using muscr::division;
+    using muscr::division_attr;
+    using tools::test_phrase_parser_attr;
+
+    division<std::string::iterator> div;
+    std::vector<division_attr> attr;
+
+    //tools::display_attribute_of_parser(div % '|');
+
+    std::string lines[] = {
+        "C, D | E, (B, G) | A   | A, C",
+    };
+    for (auto & s : lines) {
+        attr.clear();
+        REQUIRE(test_phrase_parser_attr(s, div % '|', attr));
+    }
+
+    std::string combinedStrs[4] = {
+        "CD", "EBG", "A", "AC"
+    };
+    for (std::size_t i = 0; i < 4; ++i) {
+        str_cat str_cat_;
+        for (auto & e : attr[i]) {
+            boost::apply_visitor(str_cat_, e);
+        }
+        REQUIRE(str_cat_.str_ == combinedStrs[i]);
+    }
+
+    std::string wrongLines[] = {
+        "Z, D | E, (B, G) | A   | A, C",
+        "C, D = E, (B, G) | A   | A, C",
+        "C, D = E, (B, G) | A   | A, C |",
+        "C, D > E, (B, G) | A   | A, C",
+    };
+    for (auto & s : wrongLines) {
+        attr.clear();
+        REQUIRE_FALSE(test_phrase_parser_attr(s, div % '|', attr));
+    }
+}
+
 TEST_CASE("chord section line match", "[leadsheet section]")
 {
     using muscr::chord_division;

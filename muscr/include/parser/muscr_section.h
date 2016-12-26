@@ -4,6 +4,9 @@
 
 #include <cstdint>
 #include <string>
+#include <vector>
+
+#include <boost/variant/recursive_variant.hpp>
 
 #include <boost/spirit/include/phoenix_core.hpp>
 #include <boost/spirit/include/phoenix_operator.hpp>
@@ -46,26 +49,35 @@ namespace muscr
             >> -(string("M7") | char_('7'))
     };
 
+    using subdivision_attr = boost::make_recursive_variant<
+                                    std::string,
+                                    std::vector<boost::recursive_variant_>
+                             >::type;
+
+    using division_attr = std::vector<subdivision_attr>;
+
     template <typename Iterator, typename SpaceType = qi::ascii::space_type>
     struct division
             : qi::grammar<
                     Iterator,
+                    division_attr(),
                     SpaceType
               >
     {
         division() : division::base_type(div_)
         {
-            pc_ = pitch_class<Iterator>;
+            pc_ %= pitch_class<Iterator>;
 
-            subDiv_ = '(' >> div_ >> ')';
+            subDiv_ %= pc_ | '(' >> div_ >> ')';
 
-            div_ = (pc_ | subDiv_) % ',';
+            div_ %= subDiv_ % ',';
         }
 
         qi::rule<Iterator, std::string()> pc_;
-        qi::rule<Iterator, SpaceType> subDiv_;
+        qi::rule<Iterator, subdivision_attr(), SpaceType> subDiv_;
         qi::rule<
                 Iterator,
+                division_attr(),
                 SpaceType
         > div_;
     };        
