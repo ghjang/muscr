@@ -300,6 +300,49 @@ TEST_CASE("chord section line match", "[leadsheet section]")
     }
 }
 
+TEST_CASE("chord section line match attribute", "[leadsheet section]")
+{
+    using muscr::chord_division;
+    using muscr::division_attr;
+    using tools::test_phrase_parser_attr;
+
+    chord_division<std::string::iterator> div;
+    std::vector<division_attr> attr;
+
+    std::string lines[] = {
+        "C    | Em        | Am  | F",
+        "C    | Em7        | Am  | FM7",
+        "C    | Em, (G7, F)        | Am, CM7  | F",
+    };
+    for (auto & s : lines) {
+        attr.clear();
+        REQUIRE(test_phrase_parser_attr(s, div % '|', attr));
+    }
+
+    REQUIRE(attr.size() == 4);
+    std::string combinedStrs[4] = {
+        "C", "EmG7F", "AmCM7", "F"  
+    };
+    for (std::size_t i = 0; i < 4; ++i) {
+        str_cat str_cat_;
+        for (auto & e : attr[i]) {
+            boost::apply_visitor(str_cat_, e);
+        }
+        REQUIRE(str_cat_.str_ == combinedStrs[i]);
+    }
+
+    std::string wrongLines[] = {
+        "|C    | Em        | Am  | F",
+        "C    | Em        | Am  | F|",
+        "Z    | Em        | Am  | F",
+        "C    = Em        | Am  | F",
+        "C    = Em        | Am  > F",
+    };
+    for (auto & s : wrongLines) {
+        REQUIRE_FALSE(test_phrase_parser_attr(s, div % '|', attr));
+    }
+}
+
 TEST_CASE("leadsheet section match", "[leadsheet section]")
 {
     using muscr::leadsheet_section;

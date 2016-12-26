@@ -86,22 +86,24 @@ namespace muscr
     struct chord_division
             : qi::grammar<
                     Iterator,
+                    division_attr(),
                     SpaceType
               >
     {
         chord_division() : chord_division::base_type(div_)
         {
-            chord_ = chord<Iterator>;
+            chord_ %= chord<Iterator>;
 
-            subDiv_ = '(' >> div_ >> ')';
+            subDiv_ %= chord_ | '(' >> div_ >> ')';
 
-            div_ = (chord_ | subDiv_) % ',';
+            div_ %= subDiv_ % ',';
         }
 
         qi::rule<Iterator, std::string()> chord_;
-        qi::rule<Iterator, SpaceType> subDiv_;
+        qi::rule<Iterator, subdivision_attr(), SpaceType> subDiv_;
         qi::rule<
                 Iterator,
+                division_attr(),
                 SpaceType
         > div_;
     };
