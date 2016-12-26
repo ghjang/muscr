@@ -47,7 +47,7 @@ namespace muscr
     qi::rule<Iterator, std::string()> chord{
         pitch_class<Iterator>
             >> -char_('m')
-            >> -(string("M7") | char_('7'))
+            >> -(-char_('M') >> char_('7'))
     };
 
     using subdivision_attr = boost::make_recursive_variant<
