@@ -8,7 +8,9 @@
 TEST_CASE("pitch class match", "[leadsheet section]")
 {
     using muscr::pitch_class;
-    using tools::test_parser;
+    using tools::test_phrase_parser;
+
+    pitch_class<std::string::iterator> pc_;
 
     std::string pcs[] = {
         "C",  "D",  "E",  "F",  "G",  "A",  "B",
@@ -16,7 +18,7 @@ TEST_CASE("pitch class match", "[leadsheet section]")
         "Cb", "Db", "Eb", "Fb", "Gb", "Ab", "Bb"
     };
     for (auto & s : pcs) {
-        REQUIRE(test_parser(s, pitch_class<std::string::iterator>));
+        REQUIRE(test_phrase_parser(s, pc_));
     }
 
     std::string wrongPcs[] = {
@@ -24,14 +26,16 @@ TEST_CASE("pitch class match", "[leadsheet section]")
     };
 
     for (auto & s : wrongPcs) {
-        REQUIRE_FALSE(test_parser(s, pitch_class<std::string::iterator>));
+        REQUIRE_FALSE(test_phrase_parser(s, pc_));
     }
 }
 
 TEST_CASE("triad chord match", "[leadsheet section]")
 {
     using muscr::triad_chord;
-    using tools::test_parser;
+    using tools::test_phrase_parser;
+
+    triad_chord<std::string::iterator> triad_;
     
     std::string chords[] = {
         "C",   "D",   "E",   "F",   "G",   "A",   "B",
@@ -43,7 +47,7 @@ TEST_CASE("triad chord match", "[leadsheet section]")
     };
 
     for (auto & s : chords) {
-        REQUIRE(test_parser(s, triad_chord<std::string::iterator>));
+        REQUIRE(test_phrase_parser(s, triad_));
     }
 
     std::string wrongChords[] = {
@@ -51,14 +55,16 @@ TEST_CASE("triad chord match", "[leadsheet section]")
     };
 
     for (auto & s : wrongChords) {
-        REQUIRE_FALSE(test_parser(s, triad_chord<std::string::iterator>));
+        REQUIRE_FALSE(test_phrase_parser(s, triad_));
     }
 }
 
 TEST_CASE("seventh chord match", "[leadsheet section]")
 {
     using muscr::seventh_chord;
-    using tools::test_parser;
+    using tools::test_phrase_parser;
+
+    seventh_chord<std::string::iterator> seventh_;
     
     std::string chords[] = {
         "C7",   "D7",   "E7",   "F7",   "G7",   "A7",   "B7",
@@ -77,7 +83,7 @@ TEST_CASE("seventh chord match", "[leadsheet section]")
     };
 
     for (auto & s : chords) {
-        REQUIRE(test_parser(s, seventh_chord<std::string::iterator>));
+        REQUIRE(test_phrase_parser(s, seventh_));
     }
 
     std::string wrongChords[] = {
@@ -86,7 +92,7 @@ TEST_CASE("seventh chord match", "[leadsheet section]")
     };
 
     for (auto & s : wrongChords) {
-        REQUIRE_FALSE(test_parser(s, seventh_chord<std::string::iterator>));
+        REQUIRE_FALSE(test_phrase_parser(s, seventh_));
     }
 }
 

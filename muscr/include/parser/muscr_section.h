@@ -28,27 +28,64 @@ namespace muscr
     using qi::eol;
     using qi::lexeme;
 
-    template <typename Iterator>
-    qi::rule<Iterator, std::string()> pitch_class{
-        char_("CDEFGAB") >> -char_("#b")
+    template <typename Iterator, typename SpaceType = qi::ascii::space_type>
+    struct pitch_class : qi::grammar<Iterator, std::string(), SpaceType>
+    {
+        pitch_class() : pitch_class::base_type(pc_)
+        {
+            pc_ %= lexeme[char_("CDEFGAB") >> -char_("#b")];
+        }
+
+        qi::rule<Iterator, std::string(), SpaceType> pc_;
     };
 
-    template <typename Iterator>
-    qi::rule<Iterator, std::string()> triad_chord{
-        pitch_class<Iterator> >> -char_('m')
+    template <typename Iterator, typename SpaceType = qi::ascii::space_type>
+    struct triad_chord : qi::grammar<Iterator, std::string(), SpaceType>
+    {
+        triad_chord() : triad_chord::base_type(triad_)
+        {
+            triad_ %= lexeme[
+                            char_("CDEFGAB")
+                                >> -char_("#b")
+                                >> -char_('m')
+                      ];
+        }
+
+        qi::rule<Iterator, std::string(), SpaceType> triad_;
     };
 
-    template <typename Iterator>
-    qi::rule<Iterator, std::string()> seventh_chord{
-        triad_chord<Iterator> >> (string("M7") | char_('7'))
+    template <typename Iterator, typename SpaceType = qi::ascii::space_type>
+    struct seventh_chord : qi::grammar<Iterator, std::string(), SpaceType>
+    {
+        seventh_chord() : seventh_chord::base_type(seventh_)
+        {
+            seventh_ %= lexeme[
+                            char_("CDEFGAB")
+                                >> -char_("#b")
+                                >> -char_('m')
+                                >> -char_('M') >> char_('7')
+                        ];
+        }
+
+        qi::rule<Iterator, std::string(), SpaceType> seventh_;
     };
 
-    template <typename Iterator>
-    qi::rule<Iterator, std::string()> chord{
-        pitch_class<Iterator>
-            >> -char_('m')
-            >> -(-char_('M') >> char_('7'))
+    template <typename Iterator, typename SpaceType = qi::ascii::space_type>
+    struct chord : qi::grammar<Iterator, std::string(), SpaceType>
+    {
+        chord() : chord::base_type(chord_)
+        {
+            chord_ %= lexeme[
+                            char_("CDEFGAB")
+                                >> -char_("#b")
+                                >> -char_('m')
+                                >> -(-char_('M') >> char_('7'))
+                      ];
+        }
+
+        qi::rule<Iterator, std::string(), SpaceType> chord_;
     };
+
 
     using subdivision_attr = boost::make_recursive_variant<
                                     std::string,
@@ -67,14 +104,12 @@ namespace muscr
     {
         division() : division::base_type(div_)
         {
-            pc_ %= pitch_class<Iterator>;
-
             subDiv_ %= pc_ | '(' >> div_ >> ')';
 
             div_ %= subDiv_ % ',';
         }
 
-        qi::rule<Iterator, std::string()> pc_;
+        pitch_class<Iterator, SpaceType> pc_;
         qi::rule<Iterator, subdivision_attr(), SpaceType> subDiv_;
         qi::rule<
                 Iterator,
@@ -93,18 +128,12 @@ namespace muscr
     {
         chord_division() : chord_division::base_type(div_)
         {
-            chord_ %= lexeme[
-                            char_("CDEFGAB") >> -char_("#b")
-                                >> -char_('m')
-                                >> -(-char_('M') >> char_('7'))
-                      ];
-
             subDiv_ %= chord_ | '(' >> div_ >> ')';
 
             div_ %= subDiv_ % ',';
         }
 
-        qi::rule<Iterator, std::string(), SpaceType> chord_;
+        chord<Iterator, SpaceType> chord_;
         qi::rule<Iterator, subdivision_attr(), SpaceType> subDiv_;
         qi::rule<
                 Iterator,
