@@ -309,11 +309,11 @@ TEST_CASE("chord section line match", "[leadsheet section]")
 TEST_CASE("chord section line match attribute", "[leadsheet section]")
 {
     using muscr::chord_division;
-    using muscr::division_attr;
+    using muscr::chord_division_attr;
     using tools::test_phrase_parser_attr;
 
     chord_division<std::string::iterator> div;
-    std::vector<division_attr> attr;
+    std::vector<chord_division_attr> attr;
 
     std::string lines[] = {
         "C    | Em        | Am  | F",
@@ -394,5 +394,60 @@ A =
     };
     for (auto & s : wrongSections) {
         REQUIRE_FALSE(test_phrase_parser(s, section));
+    }
+}
+
+TEST_CASE("leadsheet section match attribute", "[leadsheet section]")
+{
+    using muscr::leadsheet_section;
+    using muscr::leadsheet_section_attr;
+    using tools::test_phrase_parser_attr;
+
+    leadsheet_section<std::string::iterator> section;
+    leadsheet_section_attr attr;
+
+    std::string sections[] = {
+        R"(
+A :=
+{
+    C, D | E, (B, G) | A   | A, C
+    C    | Em        | Am  | F
+}
+        )",
+    };
+    for (auto & s : sections) {
+        REQUIRE(test_phrase_parser_attr(s, section, attr));
+    }
+    REQUIRE(attr.name_ == "A");
+    REQUIRE(attr.melodyLine_.size() == 4);
+    REQUIRE(attr.chordLine_.size() == 4);
+
+    std::string wrongSections[] = {
+        R"(
+A :=
+<
+    C, D | E, (B, G) | A   | A, C
+    C    | Em        | Am  | F
+}
+        )",        
+        R"(
+A =
+<
+    C, D | E, (B, G) | A   | A, C
+    C    | Em        | Am  | F
+}
+        )",        
+        R"(
+A =
+<
+    C, D | E, (B, G) | A    A, C
+    C    | Em        | Am  | F
+}
+        )",        
+    };
+    leadsheet_section_attr wrongAttr;
+    
+    for (auto & s : wrongSections) {
+        REQUIRE_FALSE(test_phrase_parser_attr(s, section, wrongAttr));
     }
 }

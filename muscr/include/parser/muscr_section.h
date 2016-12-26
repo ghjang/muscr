@@ -8,6 +8,9 @@
 
 #include <boost/variant/recursive_variant.hpp>
 
+#include <boost/fusion/adapted/struct/define_struct_inline.hpp>
+#include <boost/fusion/include/define_struct_inline.hpp>
+
 #include <boost/spirit/include/phoenix_core.hpp>
 #include <boost/spirit/include/phoenix_operator.hpp>
 #include <boost/spirit/include/phoenix_fusion.hpp>
@@ -118,11 +121,19 @@ namespace muscr
         > div_;
     };        
 
+
+    using chord_subdivision_attr = boost::make_recursive_variant<
+                                        std::string,
+                                        std::vector<boost::recursive_variant_>
+                                   >::type;
+
+    using chord_division_attr = std::vector<chord_subdivision_attr>;
+
     template <typename Iterator, typename SpaceType = qi::ascii::space_type>
     struct chord_division
             : qi::grammar<
                     Iterator,
-                    division_attr(),
+                    chord_division_attr(),
                     SpaceType
               >
     {
@@ -134,41 +145,50 @@ namespace muscr
         }
 
         chord<Iterator, SpaceType> chord_;
-        qi::rule<Iterator, subdivision_attr(), SpaceType> subDiv_;
+        qi::rule<Iterator, chord_subdivision_attr(), SpaceType> subDiv_;
         qi::rule<
                 Iterator,
-                division_attr(),
+                chord_division_attr(),
                 SpaceType
         > div_;
     };
+
+
+    BOOST_FUSION_DEFINE_STRUCT_INLINE(
+        leadsheet_section_attr,
+        (std::string, name_)
+        (std::vector<division_attr>, melodyLine_)
+        (std::vector<chord_division_attr>, chordLine_)
+    )
 
     template <typename Iterator, typename SpaceType = qi::ascii::space_type>
     struct leadsheet_section
             : qi::grammar<
                     Iterator,
+                    leadsheet_section_attr(),
                     SpaceType
               >
     {
         leadsheet_section() : leadsheet_section::base_type(section_)
         {
-            name_ = alpha >> *(alnum | char_("_'"));
+            name_ %= alpha >> *(alnum | char_("_'"));
 
-            melody_line_ = division_ % '|';
+            melodyLine_ %= division_ % '|';
 
-            chord_line_ = chord_division_ % '|';
+            chordLine_ %= chordDivision_ % '|';
 
-            section_ = name_ >> lit(":=") >> lit('{')
-                                >> melody_line_
-                                >> chord_line_
-                             >> lit('}');
+            section_ %= name_ >> lit(":=") >> lit('{')
+                                    >> melodyLine_
+                                    >> chordLine_
+                              >> lit('}');
         }
 
-        qi::rule<Iterator, SpaceType> name_;
+        qi::rule<Iterator, std::string(), SpaceType> name_;
         division<Iterator, SpaceType> division_;
-        chord_division<Iterator, SpaceType> chord_division_;
-        qi::rule<Iterator, SpaceType> melody_line_;
-        qi::rule<Iterator, SpaceType> chord_line_;
-        qi::rule<Iterator, SpaceType> section_;
+        chord_division<Iterator, SpaceType> chordDivision_;
+        qi::rule<Iterator, std::vector<division_attr>(), SpaceType> melodyLine_;
+        qi::rule<Iterator, std::vector<chord_division_attr>(), SpaceType> chordLine_;
+        qi::rule<Iterator, leadsheet_section_attr(), SpaceType> section_;
     };
 } // namespace muscr
 
