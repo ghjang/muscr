@@ -339,62 +339,6 @@ TEST_CASE("% repeat match", "[qi]")
 }
 
 
-namespace client
-{
-    struct recursive_match_attr;
-
-    using subelement
-        = std::vector<
-                    boost::variant<
-                        std::string,
-                        boost::recursive_wrapper<recursive_match_attr>
-                    >
-          >;
-
-    using element
-        = boost::variant<
-                std::string,
-                subelement
-          >;
-
-    struct recursive_match_attr
-    {
-        std::vector<element> elements_;
-    };
-} // namespace client
-
-BOOST_FUSION_ADAPT_STRUCT(
-    client::recursive_match_attr,
-    (std::vector<client::element>, elements_)
-)
-
-TEST_CASE("recursive match", "[qi]")
-{
-    namespace qi = boost::spirit::qi;
-    using qi::char_;
-
-    struct recursive_match
-        : qi::grammar<std::string::iterator, qi::ascii::space_type>
-    {
-        recursive_match() : recursive_match::base_type(div_)
-        {
-            subdiv_ = '(' >> div_ >> ')';
-            div_ = (char_("A-Z") | subdiv_) % ',';
-        }
-
-        qi::rule<std::string::iterator, qi::ascii::space_type> subdiv_;
-        qi::rule<std::string::iterator, qi::ascii::space_type> div_;
-    };
-
-    std::string s = "A, (B, C), (D, E, (F, G)), H";
-    auto begin = s.begin();
-    auto end = s.end();
-    recursive_match rule_;
-    bool r = qi::phrase_parse(begin, end, rule_, qi::ascii::space);
-    REQUIRE(r);
-    REQUIRE(begin == end);
-}
-
 namespace std
 {
     // for debug output
@@ -451,12 +395,10 @@ TEST_CASE("recursive match attribute", "[qi]")
     recursive_match<> rule_;
     Ast::nodes parsed;
     bool ok = qi::phrase_parse(begin, end, rule_, qi::ascii::space, parsed);
+    REQUIRE(ok);
+    REQUIRE(begin == end);
 
-    if (ok)
-        std::cout << "Parsed: " << parsed << "\n";
-    else
-        std::cout << "Parse failed\n";
-
-    if (begin != end)
-        std::cout << "Remaining unparsed input: '" << std::string(begin, end) << "'\n";    
+    if (ok) {
+        //std::cout << "Parsed: " << parsed << "\n";
+    }
 }
