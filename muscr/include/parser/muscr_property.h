@@ -29,9 +29,10 @@ BOOST_FUSION_DEFINE_STRUCT
 
 namespace muscr
 {
+    namespace qi = boost::spirit::qi;
+    
     namespace detail
     {
-        namespace qi = boost::spirit::qi;
         using qi::ascii::string;
 
         template <typename Iterator>
@@ -51,7 +52,6 @@ namespace muscr
 
     namespace detail
     {
-        namespace qi = boost::spirit::qi;
         using qi::ascii::char_;
         using qi::eol;
         using qi::lexeme;
@@ -65,24 +65,23 @@ namespace muscr
     template
     <
         typename Iterator,
-        typename SpaceType = boost::spirit::qi::ascii::space_type,
+        typename SpaceType = qi::ascii::space_type,
         typename Attr = muscr::property
     >
     auto prop_str_val{ detail::prop_str_val<Iterator, SpaceType, Attr> };
 
-    template <typename Iterator, typename SpaceType = boost::spirit::qi::ascii::space_type>
+    template <typename Iterator, typename SpaceType = qi::ascii::space_type>
     struct global_properties
-            : boost::spirit::qi::grammar<
+            : qi::grammar<
                     Iterator,
                     std::vector<muscr::property>(),
-                    boost::spirit::qi::locals<std::string>,
+                    qi::locals<std::string>,
                     SpaceType
               >
     {
         global_properties()
             : global_properties::base_type(start_)
         {
-            namespace qi = boost::spirit::qi;
             using qi::eps;
             using namespace qi::labels;
             namespace phx = boost::phoenix;
@@ -106,30 +105,29 @@ namespace muscr
                        );
         }
 
-        boost::spirit::qi::rule<Iterator, muscr::property(), SpaceType> property_;
-        boost::spirit::qi::rule<
+        qi::rule<Iterator, muscr::property(), SpaceType> property_;
+        qi::rule<
             Iterator,
             std::vector<muscr::property>(),
-            boost::spirit::qi::locals<std::string>,
+            qi::locals<std::string>,
             SpaceType
         > start_;
 
         std::multiset<std::string> propNames_;
     };
 
-    template <typename Iterator, typename SpaceType = boost::spirit::qi::ascii::space_type>
+    template <typename Iterator, typename SpaceType = qi::ascii::space_type>
     struct global_properties_map
-            : boost::spirit::qi::grammar<
+            : qi::grammar<
                     Iterator,
                     std::map<std::string, std::string>(),
-                    boost::spirit::qi::locals<std::string>,
+                    qi::locals<std::string>,
                     SpaceType
               >
     {
         global_properties_map()
             : global_properties_map::base_type(start_)
         {
-            namespace qi = boost::spirit::qi;
             using qi::eps;
             using namespace qi::labels;
             namespace phx = boost::phoenix;
@@ -154,16 +152,16 @@ namespace muscr
                        );
         }
 
-        boost::spirit::qi::rule<
+        qi::rule<
             Iterator,
             std::pair<std::string, std::string>(),
             SpaceType
         > property_;
 
-        boost::spirit::qi::rule<
+        qi::rule<
             Iterator,
             std::map<std::string, std::string>(),
-            boost::spirit::qi::locals<std::string>,
+            qi::locals<std::string>,
             SpaceType
         > start_;
 
