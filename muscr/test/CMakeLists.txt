@@ -22,6 +22,7 @@ set(SOURCE_FILES
         parser/leadsheet_property_test.cpp
         parser/leadsheet_section_test.cpp
         parser/leadsheet_score_test.cpp
-        parser/leadsheet_attr_test.cpp)
+        parser/leadsheet_attr_test.cpp
+        generator/leadsheet_js_song_test.cpp)
 
 add_executable(muscr_parser_test ${SOURCE_FILES})
