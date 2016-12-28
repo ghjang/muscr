@@ -116,11 +116,36 @@ TEST_CASE("ljs chord gen", "[ljs]")
     using sink_type = std::back_insert_iterator<std::string>;
 
     chord<sink_type> chord_;
-    chord_attr attr{ "A", "m", "7", 3 };
 
     REQUIRE(test_generator_attr(
+                "{ p : 'A', ch : '', beat : 3 }",
+                chord_,
+                chord_attr{ "A", "", "", 3 }
+            ));
+    REQUIRE(test_generator_attr(
+                "{ p : 'A', ch : 'm', beat : 3 }",
+                chord_,
+                chord_attr{ "A", "m", "", 3 }
+            ));
+    REQUIRE(test_generator_attr(
+                "{ p : 'A', ch : 'M7', beat : 3 }",
+                chord_,
+                chord_attr{ "A", "", "M7", 3 }
+            ));
+    REQUIRE(test_generator_attr(
+                "{ p : 'A', ch : '7', beat : 3 }",
+                chord_,
+                chord_attr{ "A", "", "7", 3 }
+            ));
+    REQUIRE(test_generator_attr(
                 "{ p : 'A', ch : 'm7', beat : 3 }",
-                chord_, attr
+                chord_,
+                chord_attr{ "A", "m", "7", 3 }
+            ));
+    REQUIRE(test_generator_attr(
+                "{ p : 'A', ch : 'mM7', beat : 3 }",
+                chord_,
+                chord_attr{ "A", "m", "M7", 3 }
             ));
 }
 

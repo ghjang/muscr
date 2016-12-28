@@ -58,7 +58,7 @@ namespace muscr
 
                 chordObj_ = lit("{ ")
                                 << "p : '" << pc_ << "', "
-                                << "ch : '" << modifier_ << accessaryModifier_ << "', "
+                                << "ch : '" << -modifier_ << -accessaryModifier_ << "', "
                                 << "beat : " << ushort_
                           << lit(" }");
             }
