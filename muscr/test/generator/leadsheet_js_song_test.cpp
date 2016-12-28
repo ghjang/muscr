@@ -59,7 +59,18 @@ TEST_CASE("chord part gen", "[ljs]")
                 "Am",
                 char_("CDEFGAB") << -char_("#b") << -char_('m'),
                 std::string("AXm")
-            ));    
+            ));
+
+    REQUIRE(test_generator_attr(
+                "m",
+                &char_('m') << 'm',
+                std::string("m")
+            ));
+    REQUIRE(test_generator_attr(
+                "m",
+                &char_('m') << 'm',
+                std::string("m7")
+            ));
 
             /*
     REQUIRE(test_generator_attr(
@@ -89,7 +100,7 @@ TEST_CASE("ljs gen", "[ljs]")
 
     // NOTE : need to specify the output iterator for the template parameter.
     chord<sink_type> chord_;
-    chord_attr attr{ "Am7", 1 };
+    chord_attr attr{ "A", "m", "7", 1 };
 
     std::string s;
     sink_type sink(s);
@@ -105,7 +116,7 @@ TEST_CASE("ljs chord gen", "[ljs]")
     using sink_type = std::back_insert_iterator<std::string>;
 
     chord<sink_type> chord_;
-    chord_attr attr{ "Am7", 3 };
+    chord_attr attr{ "A", "m", "7", 3 };
 
     REQUIRE(test_generator_attr(
                 "{ p : 'A', ch : 'm7', beat : 3 }",

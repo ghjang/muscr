@@ -17,7 +17,9 @@ namespace muscr
     {
         struct chord_attr
         {
-            std::string value_;
+            std::string pitchClass_;
+            std::string modifier_;
+            std::string accessaryModifier_;
             std::uint8_t beatPos_;
         };
     }
@@ -25,7 +27,9 @@ namespace muscr
 
 BOOST_FUSION_ADAPT_STRUCT(
     muscr::ljs::chord_attr,
-    (std::string, value_)
+    (std::string, pitchClass_)
+    (std::string, modifier_)
+    (std::string, accessaryModifier_)
     (std::uint8_t, beatPos_)
 )
 
@@ -35,6 +39,7 @@ namespace muscr
     namespace karma = boost::spirit::karma;
     using karma::lit;
     using karma::char_;
+    using karma::string;
     using karma::ushort_;
 
     namespace ljs
@@ -44,16 +49,23 @@ namespace muscr
         {
             chord() : chord::base_type(chordObj_)
             {
-                chord_ = "p : '" << char_("CDEFGAB") << -char_("#b") << "', "
-                       << "ch : '" << -char_('m') << -(-char_('M') << char_('7')) << '\'';
+                pc_ = char_("CDEFGAB") << -char_("#b");
+
+                modifier_ = &char_('m') << 'm';
+
+                accessaryModifier_ = &string("7") << '7'
+                                        | &string("M7") << "M7";
 
                 chordObj_ = lit("{ ")
-                                << chord_
-                                << ", beat : " << ushort_
+                                << "p : '" << pc_ << "', "
+                                << "ch : '" << modifier_ << accessaryModifier_ << "', "
+                                << "beat : " << ushort_
                           << lit(" }");
             }
 
-            karma::rule<OutIter, std::string()> chord_;
+            karma::rule<OutIter, std::string()> pc_;
+            karma::rule<OutIter, std::string()> modifier_;
+            karma::rule<OutIter, std::string()> accessaryModifier_;
             karma::rule<OutIter, chord_attr()> chordObj_;
         };
     } // namespace ljs
