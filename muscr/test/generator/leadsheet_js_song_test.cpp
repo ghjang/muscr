@@ -12,6 +12,7 @@ TEST_CASE("chord part gen", "[ljs]")
     namespace karma = boost::spirit::karma;
     using karma::char_;
     using tools::test_generator_attr;
+    using tools::test_fail_generator_attr;
 
     REQUIRE(test_generator_attr("C", char_("CDEFGAB"), std::string("C")));
     REQUIRE(test_generator_attr("G", char_("CDEFGAB"), std::string("G")));
@@ -42,7 +43,7 @@ TEST_CASE("chord part gen", "[ljs]")
             ));
 
     // NOT OK. Huh?
-    REQUIRE(!test_generator_attr(
+    REQUIRE(test_fail_generator_attr(
                 "Am",
                 char_("CDEFGAB") << -char_("#b") << -char_('m'),
                 std::string("Am")
@@ -146,6 +147,28 @@ TEST_CASE("ljs chord gen", "[ljs]")
                 "{ p : 'A', ch : 'mM7', beat : 3 }",
                 chord_,
                 chord_attr{ "A", "m", "M7", 3 }
+            ));
+}
+
+TEST_CASE("ljs note gen", "[ljs]")
+{
+    using tools::test_generator_attr;
+    using muscr::ljs::note;
+    using muscr::ljs::note_attr;
+
+    using sink_type = std::back_insert_iterator<std::string>;
+
+    note<sink_type> note_;
+
+    REQUIRE(test_generator_attr(
+                "{ keys: ['B/4'], duration: 'wr' }",
+                note_,
+                note_attr{ "B", 4, "wr" }
+            ));
+    REQUIRE(test_generator_attr(
+                "{ keys: ['Bb/3'], duration: 'w' }",
+                note_,
+                note_attr{ "Bb", 3, "w" }
             ));
 }
 
