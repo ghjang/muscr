@@ -36,6 +36,12 @@ namespace muscr
             std::vector<chord_attr> chords_;
             std::vector<note_attr> notes_;
         };
+
+        struct section_attr
+        {
+            std::string name_;
+            std::vector<bar_attr> bars_;
+        };
     }
 }
 
@@ -61,6 +67,12 @@ BOOST_FUSION_ADAPT_STRUCT(
     muscr::ljs::bar_attr,
     (std::vector<muscr::ljs::chord_attr>, chords_)
     (std::vector<muscr::ljs::note_attr>, notes_)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+    muscr::ljs::section_attr,
+    (std::string, name_)
+    (std::vector<muscr::ljs::bar_attr>, bars_)
 )
 
 
@@ -134,6 +146,21 @@ namespace muscr
             muscr::ljs::chord<OutIter> chord_;
             muscr::ljs::note<OutIter> note_;
             karma::rule<OutIter, bar_attr()> barObj_;
+        };
+
+        template <typename OutIter>
+        struct section : karma::grammar<OutIter, section_attr()>
+        {
+            section() : section::base_type(sectionObj_)
+            {
+                sectionObj_ = lit("{ ")
+                                    << "name : '" << string << "', "
+                                    << "bars : [" << (bar_ % ", ") << ']'
+                            << lit(" }");
+            }
+
+            muscr::ljs::bar<OutIter> bar_;
+            karma::rule<OutIter, section_attr()> sectionObj_;
         };
     } // namespace ljs
 

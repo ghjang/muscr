@@ -224,6 +224,67 @@ TEST_CASE("ljs bar gen", "[ljs]")
             ));
 }
 
+TEST_CASE("ljs section gen", "[ljs]")
+{
+    using tools::test_generator_attr;
+    using muscr::ljs::section;
+    using muscr::ljs::section_attr;
+
+    using sink_type = std::back_insert_iterator<std::string>;
+
+    section<sink_type> section_;
+
+    REQUIRE(test_generator_attr(
+                "{ "
+                    "name : 'A', "
+                    "bars : ["
+                        "{ chords : [{ p : 'A', ch : 'm7', beat : 1 }, { p : 'F', ch : '', beat : 3 }], "
+                          "melody : [{ keys : ['B/4'], duration : 'wr' }, { keys : ['A/4'], duration : 'w' }] }"
+                    "]"
+                " }",
+                section_,
+                section_attr{
+                    "A",
+                    {
+                        // first bar
+                        {
+                            { { "A", "m", "7", 1 }, { "F", "", "", 3 } },
+                            { { "B", 4, "wr" }, { "A", 4, "w" } }
+                        }
+                    }
+                }
+            ));
+
+    REQUIRE(test_generator_attr(
+                "{ "
+                    "name : 'A', "
+                    "bars : ["
+                        "{ chords : [{ p : 'A', ch : 'm7', beat : 1 }, { p : 'F', ch : '', beat : 3 }], "
+                          "melody : [{ keys : ['B/4'], duration : 'wr' }, { keys : ['A/4'], duration : 'w' }] }, "
+                        "{ chords : [{ p : 'A', ch : 'm7', beat : 1 }, { p : 'F', ch : '', beat : 3 }], "
+                          "melody : [{ keys : ['B/4'], duration : 'wr' }, { keys : ['A/4'], duration : 'w' }] }"
+
+                    "]"
+                " }",
+                section_,
+                section_attr{
+                    "A",
+                    {
+                        // first bar
+                        {
+                            { { "A", "m", "7", 1 }, { "F", "", "", 3 } },
+                            { { "B", 4, "wr" }, { "A", 4, "w" } }
+                        },
+                        // second bar
+                        {
+                            { { "A", "m", "7", 1 }, { "F", "", "", 3 } },
+                            { { "B", 4, "wr" }, { "A", 4, "w" } }
+                        }
+                    }
+                }
+            ));
+}
+
 TEST_CASE("leadsheet js song data", "[ljs]")
 {
 
