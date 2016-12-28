@@ -161,14 +161,45 @@ TEST_CASE("ljs note gen", "[ljs]")
     note<sink_type> note_;
 
     REQUIRE(test_generator_attr(
-                "{ keys: ['B/4'], duration: 'wr' }",
+                "{ keys : ['B/4'], duration : 'wr' }",
                 note_,
                 note_attr{ "B", 4, "wr" }
             ));
     REQUIRE(test_generator_attr(
-                "{ keys: ['Bb/3'], duration: 'w' }",
+                "{ keys : ['Bb/3'], duration : 'w' }",
                 note_,
                 note_attr{ "Bb", 3, "w" }
+            ));
+}
+
+TEST_CASE("ljs bar gen", "[ljs]")
+{
+    using tools::test_generator_attr;
+    using muscr::ljs::bar;
+    using muscr::ljs::bar_attr;
+
+    using sink_type = std::back_insert_iterator<std::string>;
+
+    bar<sink_type> bar_;
+
+    REQUIRE(test_generator_attr(
+                "{ chords : [{ p : 'C', ch : '', beat : 1 }], "
+                  "melody : [{ keys : ['B/4'], duration : 'wr' }] }",
+                bar_,
+                bar_attr{
+                    { { "C", "", "", 1 } },
+                    { { "B", 4, "wr" } }
+                }
+            ));
+
+    REQUIRE(test_generator_attr(
+                "{ chords : [{ p : 'A', ch : 'm7', beat : 1 }, { p : 'F', ch : '', beat : 3 }], "
+                  "melody : [{ keys : ['B/4'], duration : 'wr' }, { keys : ['A/4'], duration : 'w' }] }",
+                bar_,
+                bar_attr{
+                    { { "A", "m", "7", 1 }, { "F", "", "", 3 } },
+                    { { "B", 4, "wr" }, { "A", 4, "w" } }
+                }
             ));
 }
 

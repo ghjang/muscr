@@ -4,6 +4,7 @@
 
 #include <cstdint>
 #include <string>
+#include <vector>
 
 #include <boost/fusion/adapted/struct/define_struct.hpp>
 #include <boost/fusion/include/define_struct.hpp>
@@ -29,6 +30,12 @@ namespace muscr
             std::int8_t octavePos_;
             std::string duration_;
         };
+
+        struct bar_attr
+        {
+            std::vector<chord_attr> chords_;
+            std::vector<note_attr> notes_;
+        };
     }
 }
 
@@ -48,6 +55,12 @@ BOOST_FUSION_ADAPT_STRUCT(
     (std::string, pitchClass_)
     (std::int8_t, octavePos_)
     (std::string, duration_)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+    muscr::ljs::bar_attr,
+    (std::vector<muscr::ljs::chord_attr>, chords_)
+    (std::vector<muscr::ljs::note_attr>, notes_)
 )
 
 
@@ -97,13 +110,29 @@ namespace muscr
                 // TODO: add constraint rules HERE for the octave position and duration.
 
                 noteObj_ = lit("{ ")
-                                << "keys: ['" << pc_ << '/' << short_ << "'], "
-                                << "duration: '" << string << '\''
+                                << "keys : ['" << pc_ << '/' << short_ << "'], "
+                                << "duration : '" << string << '\''
                          << lit(" }");
             }
 
             karma::rule<OutIter, std::string()> pc_;
             karma::rule<OutIter, note_attr()> noteObj_;
+        };
+
+        template <typename OutIter>
+        struct bar : karma::grammar<OutIter, bar_attr()>
+        {
+            bar() : bar::base_type(barObj_)
+            {
+                barObj_ = lit("{ ")
+                                << "chords : [" << (chord_ % ", ") << "], "
+                                << "melody : [" << (note_ % ", ") << ']'
+                        << lit(" }");
+            }
+
+            muscr::ljs::chord<OutIter> chord_;
+            muscr::ljs::note<OutIter> note_;
+            karma::rule<OutIter, bar_attr()> barObj_;
         };
     } // namespace ljs
 
