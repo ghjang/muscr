@@ -113,7 +113,8 @@ namespace tools
         if (r && s == expected) {
             return true;
         }
-        std::cout << "s: " << s << '\n'
+        std::cout << "r: " << r << '\n'
+                  << "s: " << s << '\n'
                   << "expected: " << expected << '\n';
         return false;
     }
