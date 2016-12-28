@@ -110,7 +110,9 @@ TEST_CASE("ljs gen", "[ljs]")
 
 TEST_CASE("ljs chord gen", "[ljs]")
 {
+    using boost::spirit::karma::string;
     using tools::test_generator_attr;
+    using tools::test_fail_generator_attr;
     using muscr::ljs::chord;
     using muscr::ljs::chord_attr;
 
@@ -128,11 +130,30 @@ TEST_CASE("ljs chord gen", "[ljs]")
                 chord_,
                 chord_attr{ "A", "m", "", 3 }
             ));
+
+    // NOTE: Huh? well, '& predicate and karma::string' combination seems not to consume attributes.
+    //          Note that '& predicate and karma::char_' consumes an attribute.
+    REQUIRE(test_generator_attr(
+                "7",
+                &string("7") << '7' | &string("M7") << "M7",
+                std::string("7")
+            ));
+    REQUIRE(test_generator_attr(
+                "M7",
+                &string("7") << '7' | &string("M7") << "M7",
+                std::string("M7")
+            ));
+    REQUIRE(test_fail_generator_attr(
+                "M7",
+                &string("7") << '7' | &string("M7") << "M7",
+                std::string("MM7")
+            ));
     REQUIRE(test_generator_attr(
                 "{ p : 'A', ch : 'M7', beat : 3 }",
                 chord_,
                 chord_attr{ "A", "", "M7", 3 }
             ));
+
     REQUIRE(test_generator_attr(
                 "{ p : 'A', ch : '7', beat : 3 }",
                 chord_,

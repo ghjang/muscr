@@ -84,6 +84,7 @@ namespace muscr
 
                 modifier_ = &char_('m') << 'm';
 
+                // NOTE: '& predicate and karma::string' combination seems not to consume attributes.
                 accessaryModifier_ = &string("7") << '7'
                                         | &string("M7") << "M7";
 
