@@ -8,6 +8,7 @@
 
 #include <boost/type_index.hpp>
 #include <boost/spirit/include/qi.hpp>
+#include <boost/spirit/include/karma.hpp>
 
 
 inline std::string read_from_file(char const* infile)
@@ -101,6 +102,28 @@ namespace tools
         auto end = s.end();
         bool r = qi::phrase_parse(begin, end, p, qi::ascii::space, a);
         return (r && (!fullMatch || (begin == end)));
+    }
+
+    template <typename G, typename... T>
+    bool test_generator_attr(std::string const& expected, G const& g, T const&... attr)
+    {
+        std::string s;
+        std::back_insert_iterator<std::string> out(s);
+        bool r = boost::spirit::karma::generate(out, g, attr...);
+        if (r && s == expected) {
+            return true;
+        }
+        std::cout << "s: " << s << '\n'
+                  << "expected: " << expected << '\n';
+        return false;
+    }
+
+    template <typename G, typename Delimiter, typename T>
+    void test_generator_attr_delim(std::string const& expected, G const& g, Delimiter const& d, T const& attr)
+    {
+        std::string s;
+        std::back_insert_iterator<std::string> out(s);
+        return (boost::spirit::karma::generate_delimited(out, g, d, attr) && s == expected);
     }
 } // namespace tools
 
