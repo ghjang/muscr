@@ -113,10 +113,27 @@ namespace tools
         if (r && s == expected) {
             return true;
         }
-        std::cout << "r: " << r << '\n'
+        std::cout << "<-- test_generator_attr failed -->\n"
+                  << "r: " << r << '\n'
                   << "s: " << s << '\n'
                   << "expected: " << expected << '\n';
         return false;
+    }
+
+    template <typename G, typename... T>
+    bool test_fail_generator_attr(std::string const& expected, G const& g, T const&... attr)
+    {
+        std::string s;
+        std::back_insert_iterator<std::string> out(s);
+        bool r = boost::spirit::karma::generate(out, g, attr...);
+        if (r && s == expected) {
+            std::cout << "<-- test_fail_generator_attr failed -->\n"
+                      << "r: " << r << '\n'
+                      << "s: " << s << '\n'
+                      << "expected: " << expected << '\n';
+            return false;
+        }
+        return true;
     }
 
     template <typename G, typename Delimiter, typename T>
