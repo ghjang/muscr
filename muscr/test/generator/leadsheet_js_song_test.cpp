@@ -285,7 +285,59 @@ TEST_CASE("ljs section gen", "[ljs]")
             ));
 }
 
-TEST_CASE("leadsheet js song data", "[ljs]")
+TEST_CASE("leadsheet gen", "[ljs]")
 {
+    using tools::test_generator_attr;
+    using muscr::ljs::leadsheet;
+    using muscr::ljs::leadsheet_attr;
 
+    using sink_type = std::back_insert_iterator<std::string>;
+
+    leadsheet<sink_type> ls_;
+
+    REQUIRE(test_generator_attr(
+                "{ "
+                    "title : 'a song', "
+                    "composer : 'ghjang', "
+                    "keySignature : 'C', "
+                    "time : '4/4', "
+                    "changes : ["
+                        "{ "
+                            "name : 'A', "
+                            "bars : ["
+                                "{ chords : [{ p : 'A', ch : 'm7', beat : 1 }, { p : 'F', ch : '', beat : 3 }], "
+                                "melody : [{ keys : ['B/4'], duration : 'wr' }, { keys : ['A/4'], duration : 'w' }] }, "
+                                "{ chords : [{ p : 'A', ch : 'm7', beat : 1 }, { p : 'F', ch : '', beat : 3 }], "
+                                "melody : [{ keys : ['B/4'], duration : 'wr' }, { keys : ['A/4'], duration : 'w' }] }"
+
+                            "]"
+                        " }"
+                    "]"
+                " }",
+                ls_,
+                leadsheet_attr{
+                    "a song",
+                    "ghjang",
+                    "C",
+                    "4/4",
+                    {
+                        // section A
+                        {
+                            "A",
+                            {
+                                // first bar
+                                {
+                                    { { "A", "m", "7", 1 }, { "F", "", "", 3 } },
+                                    { { "B", 4, "wr" }, { "A", 4, "w" } }
+                                },
+                                // second bar
+                                {
+                                    { { "A", "m", "7", 1 }, { "F", "", "", 3 } },
+                                    { { "B", 4, "wr" }, { "A", 4, "w" } }
+                                }
+                            }
+                        }
+                    }
+                }
+            ));
 }

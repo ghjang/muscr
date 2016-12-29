@@ -42,6 +42,15 @@ namespace muscr
             std::string name_;
             std::vector<bar_attr> bars_;
         };
+
+        struct leadsheet_attr
+        {
+            std::string title_;
+            std::string composer_;
+            std::string keySignature_;
+            std::string time_;
+            std::vector<section_attr> sections_;
+        };
     }
 }
 
@@ -73,6 +82,15 @@ BOOST_FUSION_ADAPT_STRUCT(
     muscr::ljs::section_attr,
     (std::string, name_)
     (std::vector<muscr::ljs::bar_attr>, bars_)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+    muscr::ljs::leadsheet_attr,
+    (std::string, title_)
+    (std::string, composer_)
+    (std::string, keySignature_)
+    (std::string, time_)
+    (std::vector<muscr::ljs::section_attr>, sections_)
 )
 
 
@@ -161,6 +179,24 @@ namespace muscr
 
             muscr::ljs::bar<OutIter> bar_;
             karma::rule<OutIter, section_attr()> sectionObj_;
+        };
+
+        template <typename OutIter>
+        struct leadsheet : karma::grammar<OutIter, leadsheet_attr()>
+        {
+            leadsheet() : leadsheet::base_type(lsObj_)
+            {
+                lsObj_ = lit("{ ")
+                                << "title : '" << string << "', "
+                                << "composer : '" << string << "', "
+                                << "keySignature : '" << string << "', "
+                                << "time : '" << string << "', "
+                                << "changes : [" << (section_ % ", ") << ']'
+                       << lit(" }");
+            }
+
+            section<OutIter> section_;
+            karma::rule<OutIter, leadsheet_attr()> lsObj_;
         };
     } // namespace ljs
 
