@@ -16,13 +16,12 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z")
 
 set(SOURCE_FILES
         main.cpp
-        parser/parser_test.cpp
-        parser/lex_test.cpp
-        parser/qi_test.cpp
+        etc/parser_test.cpp
+        etc/lex_test.cpp
+        etc/qi_test.cpp
         parser/leadsheet_property_test.cpp
         parser/leadsheet_section_test.cpp
         parser/leadsheet_staff_test.cpp
-        parser/leadsheet_attr_test.cpp
         generator/leadsheet_js_song_test.cpp)
 
 add_executable(muscr_test ${SOURCE_FILES})
