@@ -1,15 +1,15 @@
 #include "../catch.hpp"
 
-#include "muscr/include/parser/muscr_leadsheet_score.h"
+#include "muscr/include/parser/muscr_leadsheet_staff.h"
 
 #include "muscr/include/utility.h"
 
 
-TEST_CASE("leadsheet score match", "[leadsheet score]")
+TEST_CASE("leadsheet staff match", "[leadsheet staff]")
 {
     using tools::test_phrase_parser;
 
-    std::string scores[] = {
+    std::string staffs[] = {
 R"(
 @title: A Sample Song
 @author: ghjang
@@ -29,16 +29,16 @@ A :=
 )"
     };
 
-    muscr::leadsheet_score<std::string::iterator> score_;
+    muscr::leadsheet_staff<std::string::iterator> staff_;
 
     for (auto & s : scores) {
         REQUIRE(test_phrase_parser(
                     s,
-                    score_
+                    staff_
                 ));
     }
 
-    std::string wrongScores[] = {
+    std::string wrongStaffs[] = {
 R"(
 @title: A Sample Song
 @author: ghjang
@@ -70,10 +70,10 @@ A ==
 )", // syntax error in the section
     };
 
-    for (auto & s : wrongScores) {
+    for (auto & s : wrongStaffs) {
         REQUIRE_FALSE(test_phrase_parser(
                             s,
-                            score_
+                            staff_
                       ));
     }
 }

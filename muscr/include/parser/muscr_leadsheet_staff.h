@@ -11,20 +11,20 @@ namespace muscr
     namespace qi = boost::spirit::qi;
 
     template <typename Iterator, typename SpaceType = qi::ascii::space_type>
-    struct leadsheet_score
+    struct leadsheet_staff
             : qi::grammar<
                     Iterator,
                     SpaceType
               >
     {
-        leadsheet_score() : leadsheet_score::base_type(score_)
+        leadsheet_staff() : leadsheet_staff::base_type(staff_)
         {
-            score_ = properties_ >> +section_;
+            staff_ = properties_ >> +section_;
         }
 
         global_properties_map<Iterator> properties_;
         leadsheet_section<Iterator> section_;
-        qi::rule<Iterator, SpaceType> score_;
+        qi::rule<Iterator, SpaceType> staff_;
     };
 } // namespace muscr
 
