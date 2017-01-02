@@ -216,6 +216,7 @@ TEST_CASE("rule match", "[leadsheet property]")
 {
     namespace qi = boost::spirit::qi;
     using tools::test_phrase_parser_attr;
+    using muscr::prop_name_val_pair;
 
     std::string str{
         R"(
@@ -231,7 +232,7 @@ TEST_CASE("rule match", "[leadsheet property]")
 @bpm: 100)"     // NOTE: no newline at the last property.
     };
 
-    auto prop_ = muscr::prop_str_val<std::string::iterator>;
+    prop_name_val_pair<std::string::iterator> prop_;
     std::vector<muscr::property> propVec;
 
     REQUIRE(test_phrase_parser_attr(

@@ -30,45 +30,48 @@ BOOST_FUSION_DEFINE_STRUCT
 namespace muscr
 {
     namespace qi = boost::spirit::qi;
+    using qi::char_;
+    using qi::string;
+    using qi::eol;
+    using qi::eps;
+    using qi::lexeme;
     
-    namespace detail
+    template <typename Iterator, typename SpaceType = qi::ascii::space_type>
+    struct prop_name : qi::grammar<Iterator, std::string(), SpaceType>
     {
-        using qi::ascii::string;
+        prop_name() : prop_name::base_type(name_)
+        {
+            name_ = string("title")
+                        | string("author")
+                        | string("scale")
+                        | string("pitchRange")
+                        | string("clef")
+                        | string("timeSignature")
+                        | string("bpm");
+        }
+        
+        qi::rule<Iterator, std::string(), SpaceType> name_;
+    };
 
-        template <typename Iterator>
-        qi::rule<Iterator, std::string()> prop_name{
-            string("title")
-                | string("author")
-                | string("scale")
-                | string("pitchRange")
-                | string("clef")
-                | string("timeSignature")
-                | string("bpm")
-        };
-    } // namespace detail
-
-    template <typename Iterator>
-    auto prop_name{ detail::prop_name<Iterator> };
-
-    namespace detail
-    {
-        using qi::ascii::char_;
-        using qi::eol;
-        using qi::lexeme;
-
-        template <typename Iterator, typename SpaceType, typename Attr>
-        qi::rule<Iterator, Attr(), SpaceType> prop_str_val{
-            '@' >> muscr::prop_name<Iterator> >> ':' >> lexeme[+(char_ - eol)]
-        };
-    } // namespace detail
-
-    template
+    template 
     <
         typename Iterator,
         typename SpaceType = qi::ascii::space_type,
         typename Attr = muscr::property
     >
-    auto prop_str_val{ detail::prop_str_val<Iterator, SpaceType, Attr> };
+    struct prop_name_val_pair : qi::grammar<Iterator, Attr(), SpaceType>
+    {
+        prop_name_val_pair() : prop_name_val_pair::base_type(pair_)
+        {
+            val_ = lexeme[+(char_ - eol)];
+
+            pair_ = '@' >> name_ >> ':' >> val_;
+        }
+
+        prop_name<Iterator, SpaceType> name_;
+        qi::rule<Iterator, std::string(), SpaceType> val_;
+        qi::rule<Iterator, Attr(), SpaceType> pair_;
+    };
 
     template <typename Iterator, typename SpaceType = qi::ascii::space_type>
     struct global_properties
@@ -82,14 +85,11 @@ namespace muscr
         global_properties()
             : global_properties::base_type(start_)
         {
-            using qi::eps;
             using namespace qi::labels;
             namespace phx = boost::phoenix;
             using phx::at_c;
             using phx::insert;
             using phx::count;
-
-            property_ = prop_str_val<Iterator, SpaceType>;
 
             // NOTE: If a semantic action is attached to a parser,
             //       then no attributes are emitted automatically anymore.
@@ -105,7 +105,7 @@ namespace muscr
                        );
         }
 
-        qi::rule<Iterator, muscr::property(), SpaceType> property_;
+        prop_name_val_pair<Iterator, SpaceType> property_;
         qi::rule<
             Iterator,
             std::vector<muscr::property>(),
@@ -128,15 +128,11 @@ namespace muscr
         global_properties_map()
             : global_properties_map::base_type(start_)
         {
-            using qi::eps;
             using namespace qi::labels;
             namespace phx = boost::phoenix;
             using phx::at_c;
             using phx::insert;
             using phx::count;
-
-            // NOTE: a list of std::pair is compatilbe with std::map.
-            property_ = prop_str_val<Iterator, SpaceType, std::pair<std::string, std::string>>;
 
             // NOTE: If a semantic action is attached to a parser,
             //       then no attributes are emitted automatically anymore.
@@ -152,11 +148,8 @@ namespace muscr
                        );
         }
 
-        qi::rule<
-            Iterator,
-            std::pair<std::string, std::string>(),
-            SpaceType
-        > property_;
+        // NOTE: a list of std::pair is compatilbe with std::map.
+        prop_name_val_pair<Iterator, SpaceType, std::pair<std::string, std::string>> property_;
 
         qi::rule<
             Iterator,
