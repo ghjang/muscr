@@ -6,17 +6,14 @@
 #include <string>
 #include <vector>
 
-#include <boost/variant/recursive_variant.hpp>
-
-#include <boost/fusion/adapted/struct/define_struct_inline.hpp>
-#include <boost/fusion/include/define_struct_inline.hpp>
-
 #include <boost/spirit/include/phoenix_core.hpp>
 #include <boost/spirit/include/phoenix_operator.hpp>
 #include <boost/spirit/include/phoenix_fusion.hpp>
 #include <boost/spirit/include/phoenix_stl.hpp>
 
 #include <boost/spirit/include/qi.hpp>
+
+#include "muscr/include/parser/muscr_section_attr.h"
 
 
 namespace muscr
@@ -89,14 +86,6 @@ namespace muscr
         qi::rule<Iterator, std::string(), SpaceType> chord_;
     };
 
-
-    using subdivision_attr = boost::make_recursive_variant<
-                                    std::string,
-                                    std::vector<boost::recursive_variant_>
-                             >::type;
-
-    using division_attr = std::vector<subdivision_attr>;
-
     template <typename Iterator, typename SpaceType = qi::ascii::space_type>
     struct division
             : qi::grammar<
@@ -121,14 +110,6 @@ namespace muscr
         > div_;
     };        
 
-
-    using chord_subdivision_attr = boost::make_recursive_variant<
-                                        std::string,
-                                        std::vector<boost::recursive_variant_>
-                                   >::type;
-
-    using chord_division_attr = std::vector<chord_subdivision_attr>;
-
     template <typename Iterator, typename SpaceType = qi::ascii::space_type>
     struct chord_division
             : qi::grammar<
@@ -152,14 +133,6 @@ namespace muscr
                 SpaceType
         > div_;
     };
-
-
-    BOOST_FUSION_DEFINE_STRUCT_INLINE(
-        leadsheet_section_attr,
-        (std::string, name_)
-        (std::vector<division_attr>, melodyLine_)
-        (std::vector<chord_division_attr>, chordLine_)
-    )
 
     template <typename Iterator, typename SpaceType = qi::ascii::space_type>
     struct leadsheet_section

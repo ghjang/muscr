@@ -6,8 +6,6 @@
 #include <set>
 #include <map>
 
-#include <boost/fusion/adapted/struct/define_struct.hpp>
-#include <boost/fusion/include/define_struct.hpp>
 #include <boost/fusion/adapted/std_pair.hpp>
 #include <boost/fusion/include/std_pair.hpp>
 
@@ -18,13 +16,7 @@
 
 #include <boost/spirit/include/qi.hpp>
 
-
-BOOST_FUSION_DEFINE_STRUCT
-(
-    (muscr), property,
-    (std::string, name_)
-    (std::string, value_)
-)
+#include "muscr/include/parser/muscr_property_attr.h"
 
 
 namespace muscr

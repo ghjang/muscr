@@ -5,6 +5,8 @@
 #include "muscr/include/parser/muscr_property.h"
 #include "muscr/include/parser/muscr_section.h"
 
+#include "muscr/include/parser/muscr_leadsheet_staff_attr.h"
+
 
 namespace muscr
 {
