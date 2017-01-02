@@ -1,5 +1,5 @@
-#ifndef MUSCR_LEADSHEET_SCORE_H
-#define MUSCR_LEADSHEET_SCORE_H
+#ifndef MUSCR_LEADSHEET_STAFF_H
+#define MUSCR_LEADSHEET_STAFF_H
 
 
 #include "muscr/include/parser/muscr_property.h"
@@ -29,4 +29,4 @@ namespace muscr
 } // namespace muscr
 
 
-#endif // MUSCR_LEADSHEET_SCORE_H
+#endif // MUSCR_LEADSHEET_STAFF_H

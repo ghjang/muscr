@@ -21,7 +21,7 @@ set(SOURCE_FILES
         parser/qi_test.cpp
         parser/leadsheet_property_test.cpp
         parser/leadsheet_section_test.cpp
-        parser/leadsheet_score_test.cpp
+        parser/leadsheet_staff_test.cpp
         parser/leadsheet_attr_test.cpp
         generator/leadsheet_js_song_test.cpp)
 
