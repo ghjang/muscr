@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5.2)
-project(muscr_parser_test)
+project(muscr_test)
 
 set(BOOST_ROOT "../../../boost_1_63_0")
 find_package(Boost 1.63.0)
@@ -25,4 +25,4 @@ set(SOURCE_FILES
         parser/leadsheet_attr_test.cpp
         generator/leadsheet_js_song_test.cpp)
 
-add_executable(muscr_parser_test ${SOURCE_FILES})
+add_executable(muscr_test ${SOURCE_FILES})
