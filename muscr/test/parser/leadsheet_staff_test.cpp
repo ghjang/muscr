@@ -77,3 +77,8 @@ A ==
                       ));
     }
 }
+
+TEST_CASE("leadsheet staff attr", "[leadsheet staff]")
+{
+    
+}

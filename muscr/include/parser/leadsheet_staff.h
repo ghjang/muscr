@@ -16,6 +16,7 @@ namespace muscr::parser
     struct leadsheet_staff
             : qi::grammar<
                     Iterator,
+                    leadsheet_staff_attr(),
                     SpaceType
               >
     {
@@ -24,9 +25,9 @@ namespace muscr::parser
             staff_ = properties_ >> +section_;
         }
 
-        global_properties_map<Iterator> properties_;
-        leadsheet_section<Iterator> section_;
-        qi::rule<Iterator, SpaceType> staff_;
+        global_properties_map<Iterator, SpaceType> properties_;
+        leadsheet_section<Iterator, SpaceType> section_;
+        qi::rule<Iterator, leadsheet_staff_attr(), SpaceType> staff_;
     };
 } // namespace muscr::parser
 
