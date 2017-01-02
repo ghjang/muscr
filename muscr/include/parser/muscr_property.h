@@ -1,5 +1,5 @@
-#ifndef MUSCR_PROPERTY_H
-#define MUSCR_PROPERTY_H
+#ifndef MUSCR_PARSER_PROPERTY_H
+#define MUSCR_PARSER_PROPERTY_H
 
 
 #include <cstdint>
@@ -19,7 +19,7 @@
 #include "muscr/include/parser/muscr_property_attr.h"
 
 
-namespace muscr
+namespace muscr::parser
 {
     namespace qi = boost::spirit::qi;
     using qi::char_;
@@ -49,7 +49,7 @@ namespace muscr
     <
         typename Iterator,
         typename SpaceType = qi::ascii::space_type,
-        typename Attr = muscr::property
+        typename Attr = muscr::parser::property
     >
     struct prop_name_val_pair : qi::grammar<Iterator, Attr(), SpaceType>
     {
@@ -69,7 +69,7 @@ namespace muscr
     struct global_properties
             : qi::grammar<
                     Iterator,
-                    std::vector<muscr::property>(),
+                    std::vector<muscr::parser::property>(),
                     qi::locals<std::string>,
                     SpaceType
               >
@@ -100,7 +100,7 @@ namespace muscr
         prop_name_val_pair<Iterator, SpaceType> property_;
         qi::rule<
             Iterator,
-            std::vector<muscr::property>(),
+            std::vector<muscr::parser::property>(),
             qi::locals<std::string>,
             SpaceType
         > start_;
@@ -152,7 +152,7 @@ namespace muscr
 
         std::multiset<std::string> propNames_;
     };
-} // namespace muscr
+} // namespace muscr::parser
 
 
-#endif // MUSCR_PROPERTY_H
+#endif // MUSCR_PARSER_PROPERTY_H

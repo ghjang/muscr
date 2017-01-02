@@ -16,7 +16,7 @@
 #include "muscr/include/parser/section_attr.h"
 
 
-namespace muscr
+namespace muscr::parser
 {
     namespace qi = boost::spirit::qi;
     using qi::eps;
@@ -163,7 +163,7 @@ namespace muscr
         qi::rule<Iterator, std::vector<chord_division_attr>(), SpaceType> chordLine_;
         qi::rule<Iterator, leadsheet_section_attr(), SpaceType> section_;
     };
-} // namespace muscr
+} // namespace muscr::parser
 
 
 #endif // MUSCR_SECTION_H

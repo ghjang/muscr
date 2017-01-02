@@ -8,7 +8,7 @@
 
 BOOST_FUSION_DEFINE_STRUCT
 (
-    (muscr), property,
+    (muscr::parser), property,
     (std::string, name_)
     (std::string, value_)
 )

@@ -29,7 +29,7 @@ A :=
 )"
     };
 
-    muscr::leadsheet_staff<std::string::iterator> staff_;
+    muscr::parser::leadsheet_staff<std::string::iterator> staff_;
 
     for (auto & s : staffs) {
         REQUIRE(test_phrase_parser(

@@ -93,8 +93,8 @@ TEST_CASE("chord part gen", "[ljs]")
 TEST_CASE("ljs gen", "[ljs]")
 {
     namespace karma = boost::spirit::karma;
-    using muscr::ljs::chord;
-    using muscr::ljs::chord_attr;
+    using muscr::generator::ljs::chord;
+    using muscr::generator::ljs::chord_attr;
 
     // NOTE: a output iterator is required.
     using sink_type = std::back_insert_iterator<std::string>;
@@ -113,8 +113,8 @@ TEST_CASE("ljs chord gen", "[ljs]")
     using boost::spirit::karma::string;
     using tools::test_generator_attr;
     using tools::test_fail_generator_attr;
-    using muscr::ljs::chord;
-    using muscr::ljs::chord_attr;
+    using muscr::generator::ljs::chord;
+    using muscr::generator::ljs::chord_attr;
 
     using sink_type = std::back_insert_iterator<std::string>;
 
@@ -174,8 +174,8 @@ TEST_CASE("ljs chord gen", "[ljs]")
 TEST_CASE("ljs note gen", "[ljs]")
 {
     using tools::test_generator_attr;
-    using muscr::ljs::note;
-    using muscr::ljs::note_attr;
+    using muscr::generator::ljs::note;
+    using muscr::generator::ljs::note_attr;
 
     using sink_type = std::back_insert_iterator<std::string>;
 
@@ -196,8 +196,8 @@ TEST_CASE("ljs note gen", "[ljs]")
 TEST_CASE("ljs bar gen", "[ljs]")
 {
     using tools::test_generator_attr;
-    using muscr::ljs::bar;
-    using muscr::ljs::bar_attr;
+    using muscr::generator::ljs::bar;
+    using muscr::generator::ljs::bar_attr;
 
     using sink_type = std::back_insert_iterator<std::string>;
 
@@ -227,8 +227,8 @@ TEST_CASE("ljs bar gen", "[ljs]")
 TEST_CASE("ljs section gen", "[ljs]")
 {
     using tools::test_generator_attr;
-    using muscr::ljs::section;
-    using muscr::ljs::section_attr;
+    using muscr::generator::ljs::section;
+    using muscr::generator::ljs::section_attr;
 
     using sink_type = std::back_insert_iterator<std::string>;
 
@@ -288,8 +288,8 @@ TEST_CASE("ljs section gen", "[ljs]")
 TEST_CASE("leadsheet gen", "[ljs]")
 {
     using tools::test_generator_attr;
-    using muscr::ljs::leadsheet;
-    using muscr::ljs::leadsheet_attr;
+    using muscr::generator::ljs::leadsheet;
+    using muscr::generator::ljs::leadsheet_attr;
 
     using sink_type = std::back_insert_iterator<std::string>;
 

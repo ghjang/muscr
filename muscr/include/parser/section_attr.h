@@ -11,7 +11,7 @@
 #include <boost/fusion/include/define_struct_inline.hpp>
 
 
-namespace muscr
+namespace muscr::parser
 {
     using subdivision_attr = boost::make_recursive_variant<
                                     std::string,

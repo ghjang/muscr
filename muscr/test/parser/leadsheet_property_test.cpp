@@ -146,7 +146,7 @@ TEST_CASE("simple match - 3", "[leadsheet property]")
 @bpm: 100)"     // NOTE: no newline at the last property.
     };
 
-    std::vector<muscr::property> propVec;
+    std::vector<muscr::parser::property> propVec;
 
     REQUIRE(test_parser_attr(
                 str,
@@ -191,7 +191,7 @@ TEST_CASE("simple match - 4", "[leadsheet property]")
 @bpm: 100)"     // NOTE: no newline at the last property.
     };
 
-    std::vector<muscr::property> propVec;
+    std::vector<muscr::parser::property> propVec;
 
     REQUIRE(test_phrase_parser_attr(
                 str,
@@ -216,7 +216,7 @@ TEST_CASE("rule match", "[leadsheet property]")
 {
     namespace qi = boost::spirit::qi;
     using tools::test_phrase_parser_attr;
-    using muscr::prop_name_val_pair;
+    using muscr::parser::prop_name_val_pair;
 
     std::string str{
         R"(
@@ -233,7 +233,7 @@ TEST_CASE("rule match", "[leadsheet property]")
     };
 
     prop_name_val_pair<std::string::iterator> prop_;
-    std::vector<muscr::property> propVec;
+    std::vector<muscr::parser::property> propVec;
 
     REQUIRE(test_phrase_parser_attr(
                 str,
@@ -257,7 +257,7 @@ TEST_CASE("rule match", "[leadsheet property]")
 TEST_CASE("rule match - 1", "[leadsheet property]")
 {
     namespace qi = boost::spirit::qi;
-    using muscr::global_properties;
+    using muscr::parser::global_properties;
     using tools::test_phrase_parser_attr;
 
     std::string str{
@@ -275,7 +275,7 @@ TEST_CASE("rule match - 1", "[leadsheet property]")
     };
 
     global_properties<std::string::iterator> properties;
-    std::vector<muscr::property> propVec;
+    std::vector<muscr::parser::property> propVec;
 
     REQUIRE(test_phrase_parser_attr(
                 str,
@@ -321,7 +321,7 @@ TEST_CASE("rule match - 1", "[leadsheet property]")
 TEST_CASE("rule match - 2", "[leadsheet property]")
 {
     namespace qi = boost::spirit::qi;
-    using muscr::global_properties_map;
+    using muscr::parser::global_properties_map;
     using tools::test_phrase_parser_attr;
 
     std::string str{

@@ -1,5 +1,5 @@
-#ifndef MUSCR_LEADSHEET_STAFF_H
-#define MUSCR_LEADSHEET_STAFF_H
+#ifndef MUSCR_PARSER_LEADSHEET_STAFF_H
+#define MUSCR_PARSER_LEADSHEET_STAFF_H
 
 
 #include "muscr/include/parser/muscr_property.h"
@@ -8,7 +8,7 @@
 #include "muscr/include/parser/leadsheet_staff_attr.h"
 
 
-namespace muscr
+namespace muscr::parser
 {
     namespace qi = boost::spirit::qi;
 
@@ -28,7 +28,7 @@ namespace muscr
         leadsheet_section<Iterator> section_;
         qi::rule<Iterator, SpaceType> staff_;
     };
-} // namespace muscr
+} // namespace muscr::parser
 
 
-#endif // MUSCR_LEADSHEET_STAFF_H
+#endif // MUSCR_PARSER_LEADSHEET_STAFF_H

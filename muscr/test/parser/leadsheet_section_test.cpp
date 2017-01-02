@@ -7,7 +7,7 @@
 
 TEST_CASE("pitch class match", "[leadsheet section]")
 {
-    using muscr::pitch_class;
+    using muscr::parser::pitch_class;
     using tools::test_phrase_parser;
 
     pitch_class<std::string::iterator> pc_;
@@ -32,7 +32,7 @@ TEST_CASE("pitch class match", "[leadsheet section]")
 
 TEST_CASE("triad chord match", "[leadsheet section]")
 {
-    using muscr::triad_chord;
+    using muscr::parser::triad_chord;
     using tools::test_phrase_parser;
 
     triad_chord<std::string::iterator> triad_;
@@ -61,7 +61,7 @@ TEST_CASE("triad chord match", "[leadsheet section]")
 
 TEST_CASE("seventh chord match", "[leadsheet section]")
 {
-    using muscr::seventh_chord;
+    using muscr::parser::seventh_chord;
     using tools::test_phrase_parser;
 
     seventh_chord<std::string::iterator> seventh_;
@@ -98,7 +98,7 @@ TEST_CASE("seventh chord match", "[leadsheet section]")
 
 TEST_CASE("melody division match", "[leadsheet section]")
 {
-    using muscr::division;
+    using muscr::parser::division;
     using tools::test_phrase_parser;
 
     std::string divs[] = {
@@ -136,7 +136,7 @@ TEST_CASE("melody division match", "[leadsheet section]")
 
 TEST_CASE("chord division match", "[leadsheet section]")
 {
-    using muscr::chord_division;
+    using muscr::parser::chord_division;
     using tools::test_phrase_parser;
 
     std::string divs[] = {
@@ -194,7 +194,7 @@ TEST_CASE("chord division match", "[leadsheet section]")
 
 TEST_CASE("melody section line match", "[leadsheet section]")
 {
-    using muscr::division;
+    using muscr::parser::division;
     using tools::test_phrase_parser;
 
     division<std::string::iterator> div;
@@ -238,8 +238,8 @@ struct str_cat : boost::static_visitor<>
 
 TEST_CASE("melody section line attribute", "[leadsheet section]")
 {
-    using muscr::division;
-    using muscr::division_attr;
+    using muscr::parser::division;
+    using muscr::parser::division_attr;
     using tools::test_phrase_parser_attr;
 
     division<std::string::iterator> div;
@@ -280,7 +280,7 @@ TEST_CASE("melody section line attribute", "[leadsheet section]")
 
 TEST_CASE("chord section line match", "[leadsheet section]")
 {
-    using muscr::chord_division;
+    using muscr::parser::chord_division;
     using tools::test_phrase_parser;
 
     chord_division<std::string::iterator> div;
@@ -308,8 +308,8 @@ TEST_CASE("chord section line match", "[leadsheet section]")
 
 TEST_CASE("chord section line match attribute", "[leadsheet section]")
 {
-    using muscr::chord_division;
-    using muscr::chord_division_attr;
+    using muscr::parser::chord_division;
+    using muscr::parser::chord_division_attr;
     using tools::test_phrase_parser_attr;
 
     chord_division<std::string::iterator> div;
@@ -351,7 +351,7 @@ TEST_CASE("chord section line match attribute", "[leadsheet section]")
 
 TEST_CASE("leadsheet section match", "[leadsheet section]")
 {
-    using muscr::leadsheet_section;
+    using muscr::parser::leadsheet_section;
     using tools::test_phrase_parser;
 
     leadsheet_section<std::string::iterator> section;
@@ -399,8 +399,8 @@ A =
 
 TEST_CASE("leadsheet section match attribute", "[leadsheet section]")
 {
-    using muscr::leadsheet_section;
-    using muscr::leadsheet_section_attr;
+    using muscr::parser::leadsheet_section;
+    using muscr::parser::leadsheet_section_attr;
     using tools::test_phrase_parser_attr;
 
     leadsheet_section<std::string::iterator> section;
