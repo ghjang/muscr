@@ -13,7 +13,7 @@
 
 #include <boost/spirit/include/qi.hpp>
 
-#include "muscr/include/parser/muscr_section_attr.h"
+#include "muscr/include/parser/section_attr.h"
 
 
 namespace muscr

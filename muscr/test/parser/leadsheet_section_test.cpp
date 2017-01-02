@@ -1,6 +1,6 @@
 #include "../catch.hpp"
 
-#include "muscr/include/parser/muscr_section.h"
+#include "muscr/include/parser/section.h"
 
 #include "muscr/include/utility.h"
 

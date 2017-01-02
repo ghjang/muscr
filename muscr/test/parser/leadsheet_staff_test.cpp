@@ -1,6 +1,6 @@
 #include "../catch.hpp"
 
-#include "muscr/include/parser/muscr_leadsheet_staff.h"
+#include "muscr/include/parser/leadsheet_staff.h"
 
 #include "muscr/include/utility.h"
 
