@@ -5,16 +5,16 @@
 #include <stdexcept>
 
 
-namespace muscr
+namespace muscr::division_ratio
 {
-    struct division_ratio
+    struct ratio
     {
-        division_ratio(int num, int denom)
+        ratio(int num, int denom)
             : numerator_(num)
             , denominator_(denom)
         { }
         
-        bool operator < (division_ratio const& rhs) const
+        bool operator < (ratio const& rhs) const
         {
             if (0 == denominator_ || 0 == rhs.denominator_) {
                 throw std::overflow_error("[muscr::division_ratio] division by zero.");
@@ -23,7 +23,7 @@ namespace muscr
                         < (1.0 * rhs.numerator_ / rhs.denominator_);
         }
 
-        bool operator == (division_ratio const& rhs) const
+        bool operator == (ratio const& rhs) const
         {
             return (numerator_ == rhs.numerator_)
                         && (denominator_ == rhs.denominator_);
@@ -32,7 +32,19 @@ namespace muscr
         int const numerator_;
         int const denominator_; 
     };
-} // namespace muscr
+
+    ratio const whole_note{ 4, 1 };
+    ratio const half_note{ 2, 1 };
+    ratio const quater_note{ 1, 1 };
+    ratio const eighth_note{ 1, 2 };
+    ratio const sixteenth_note{ 1, 4 };
+
+    ratio const whole_rest{ 4, 1 };
+    ratio const half_rest{ 2, 1 };
+    ratio const quater_rest{ 1, 1 };
+    ratio const eighth_rest{ 1, 2 };
+    ratio const sixteenth_rest{ 1, 4 };
+} // namespace muscr::division_ratio
 
 
 #endif // MUSCR_DIVISION_RATIO_H
