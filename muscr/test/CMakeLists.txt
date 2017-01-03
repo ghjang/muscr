@@ -23,6 +23,7 @@ set(SOURCE_FILES
         parser/leadsheet_section_test.cpp
         parser/leadsheet_staff_test.cpp
         generator/leadsheet_js_song_test.cpp
-        muscr_to_ljs_conversion_test.cpp)
+        muscr_to_ljs_conversion_test.cpp
+        division_ratio_test.cpp)
 
 add_executable(muscr_test ${SOURCE_FILES})
