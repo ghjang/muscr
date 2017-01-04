@@ -5,6 +5,27 @@
 #include <stdexcept>
 
 
+namespace muscr::division_ratio::detail
+{
+    template <typename T>
+    auto gcd_impl(T a, T b)
+    {
+        if (0 == b) {
+            return a;
+        }
+        return gcd_impl(b, a % b);
+    }
+
+    template <typename T>
+    int gcd(T a, T b)
+    {
+        if (a == 0 || b == 0) {
+            return 0;
+        }
+        return gcd_impl(a, b);
+    }
+} // muscr::division_ratio::detail
+
 namespace muscr::division_ratio
 {
     template <int Factor = 1>
@@ -36,6 +57,13 @@ namespace muscr::division_ratio
         ratio<Factor> operator * (ratio<Factor> const& rhs) const
         {
             return ratio<Factor>{ numerator_ * rhs.numerator_, denominator_ * rhs.denominator_ };
+        }
+
+    public:
+        ratio<Factor> to_lowest_term() const
+        {
+            auto gcd = detail::gcd(numerator_, denominator_);
+            return ratio<Factor>{ numerator_ / gcd, denominator_ / gcd };
         }
     
     public:

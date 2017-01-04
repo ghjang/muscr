@@ -60,4 +60,7 @@ TEST_CASE("ratio multiplication", "[division ratio]")
     REQUIRE((ratio<>{ 6, 2 } == ratio<>{ 1, 2 } * ratio<>{ 6 }));
 
     REQUIRE((ratio<>{ 6, 2 } == eighth_note * ratio<>{ 6 }));
+
+    auto r = ratio<>{ 1, 2 } * ratio<>{ 6 };
+    REQUIRE(ratio<>{ 3 } == r.to_lowest_term());
 }
