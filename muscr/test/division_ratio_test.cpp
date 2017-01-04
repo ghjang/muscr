@@ -64,3 +64,22 @@ TEST_CASE("ratio multiplication", "[division ratio]")
     auto r = ratio<>{ 1, 2 } * ratio<>{ 6 };
     REQUIRE(ratio<>{ 3 } == r.to_lowest_term());
 }
+
+TEST_CASE("ratio division", "[division ratio]")
+{
+    using namespace muscr::division_ratio;
+
+    REQUIRE(2 % 3 == 2);
+
+    auto r = ratio<>{ 1, 2 } * ratio<>{ 6 };
+    
+    auto r1 = r.to_lowest_term();
+    REQUIRE(ratio<>{ 3 } == r1);
+
+    auto r2 = r1 / ratio<>{ 3 };
+    REQUIRE((ratio<>{ 3, 3 } == r2));
+    REQUIRE(ratio<>{ 1 } == r2.to_lowest_term());
+
+    auto r4 = ratio<>{ 1 } * ratio<> { 4 };
+    REQUIRE((ratio<>{ 4, 3 } == r4 / ratio<>{ 3 }));
+}

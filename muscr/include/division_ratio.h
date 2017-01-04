@@ -59,6 +59,11 @@ namespace muscr::division_ratio
             return ratio<Factor>{ numerator_ * rhs.numerator_, denominator_ * rhs.denominator_ };
         }
 
+        ratio<Factor> operator / (ratio<Factor> const& rhs) const
+        {
+            return ratio<Factor>{ numerator_ * rhs.denominator_, denominator_ * rhs.numerator_ };
+        }
+
     public:
         ratio<Factor> to_lowest_term() const
         {
