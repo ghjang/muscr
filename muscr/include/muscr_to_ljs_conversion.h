@@ -4,6 +4,8 @@
 
 #include <cassert>
 #include <cstdint>
+#include <cctype>
+#include <algorithm>
 #include <string>
 #include <vector>
 #include <stack>
@@ -217,6 +219,12 @@ namespace muscr
         destAttr.composer_      = srcAttr.properties_["author"];
         destAttr.keySignature_  = srcAttr.properties_["scale"];
         destAttr.time_          = srcAttr.properties_["timeSignature"];
+
+        // NOTE: LeadsheetJS requires no spaces in the time signature string expression.
+        destAttr.time_.erase(
+            std::remove_if(destAttr.time_.begin(), destAttr.time_.end(), isspace),
+            destAttr.time_.end()
+        );
 
         auto const defaultPitchRange = std::stoi(srcAttr.properties_["pitchRange"]);
 
