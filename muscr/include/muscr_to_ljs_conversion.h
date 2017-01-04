@@ -14,9 +14,10 @@
 #include <boost/fusion/include/std_pair.hpp>
 
 #include <boost/spirit/include/qi.hpp>
+#include <boost/spirit/include/karma.hpp>
 
 #include "muscr/include/parser/leadsheet_staff_attr.h"
-#include "muscr/include/generator/leadsheet_js_song_attr.h"
+#include "muscr/include/generator/leadsheet_js_song.h"
 #include "muscr/include/generator/leadsheet_js_duration.h"
 
 
@@ -193,7 +194,22 @@ namespace muscr::detail
 
 namespace muscr
 {
-    auto to_ljs_song_data(muscr::parser::leadsheet_staff_attr srcAttr)
+    auto to_leadsheet_attr(std::string & muscrStr)
+    {
+        namespace qi = boost::spirit::qi;
+        muscr::parser::leadsheet_staff<std::string::iterator> staff_;
+        muscr::parser::leadsheet_staff_attr srcAttr;
+
+        auto begin = muscrStr.begin();
+        auto end = muscrStr.end();
+        bool parseResult = qi::phrase_parse(begin, end, staff_, qi::ascii::space, srcAttr);
+        if (!parseResult || begin != end) {
+            // TODO: throw an exception
+        }
+        return srcAttr;
+    }
+
+    auto to_ljs_song_data_attr(muscr::parser::leadsheet_staff_attr srcAttr)
     {
         muscr::generator::ljs::leadsheet_staff_attr destAttr;
 
@@ -231,6 +247,28 @@ namespace muscr
         }
 
         return destAttr;
+    }
+
+    std::string to_ljs_song_data_str(muscr::generator::ljs::leadsheet_staff_attr attr)
+    {
+        using sink_type = std::back_insert_iterator<std::string>;
+        muscr::generator::ljs::leadsheet_staff<sink_type> ls_;
+        std::string ljsStr;
+        std::back_insert_iterator<std::string> out(ljsStr);
+        bool genResult = boost::spirit::karma::generate(out, ls_, attr);
+        if (!genResult) {
+            // TODO: throw an exception.
+        }
+        return ljsStr;
+    }
+
+    std::string generate_ljs_song_data_module_str(std::string & muscrStr)
+    {
+        auto srcAttr = to_leadsheet_attr(muscrStr);
+        auto destAttr = to_ljs_song_data_attr(srcAttr);
+        std::ostringstream oss;
+        oss << "define(function() { return " << to_ljs_song_data_str(destAttr) << "; })";
+        return oss.str();
     }
 } // namespace muscr
 
