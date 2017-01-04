@@ -28,8 +28,8 @@ namespace muscr::generator::ljs
         { sixteenth_rest,   "16r" }
     };
 
-    auto ratio_to_str(ratio<> const& r) { return note_ratio_to_str_map.at(r); }
-    auto ratio_to_str(ratio<10> const& r) { return rest_ratio_to_str_map.at(r); }
+    inline auto ratio_to_str(ratio<> const& r) { return note_ratio_to_str_map.at(r); }
+    inline auto ratio_to_str(ratio<10> const& r) { return rest_ratio_to_str_map.at(r); }
 } // namespace muscr::generator::ljs
 
 
