@@ -288,12 +288,12 @@ TEST_CASE("ljs section gen", "[ljs]")
 TEST_CASE("leadsheet gen", "[ljs]")
 {
     using tools::test_generator_attr;
-    using muscr::generator::ljs::leadsheet;
-    using muscr::generator::ljs::leadsheet_attr;
+    using muscr::generator::ljs::leadsheet_staff;
+    using muscr::generator::ljs::leadsheet_staff_attr;
 
     using sink_type = std::back_insert_iterator<std::string>;
 
-    leadsheet<sink_type> ls_;
+    leadsheet_staff<sink_type> ls_;
 
     REQUIRE(test_generator_attr(
                 "{ "
@@ -315,7 +315,7 @@ TEST_CASE("leadsheet gen", "[ljs]")
                     "]"
                 " }",
                 ls_,
-                leadsheet_attr{
+                leadsheet_staff_attr{
                     "a song",
                     "ghjang",
                     "C",

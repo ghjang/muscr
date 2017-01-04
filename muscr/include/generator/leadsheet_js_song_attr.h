@@ -39,7 +39,7 @@ namespace muscr::generator::ljs
         std::vector<bar_attr> bars_;
     };
 
-    struct leadsheet_attr
+    struct leadsheet_staff_attr
     {
         std::string title_;
         std::string composer_;
@@ -81,7 +81,7 @@ BOOST_FUSION_ADAPT_STRUCT(
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-    muscr::generator::ljs::leadsheet_attr,
+    muscr::generator::ljs::leadsheet_staff_attr,
     (std::string, title_)
     (std::string, composer_)
     (std::string, keySignature_)

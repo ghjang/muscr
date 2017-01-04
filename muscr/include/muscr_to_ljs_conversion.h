@@ -53,7 +53,7 @@ namespace muscr
             std::vector<muscr::generator::ljs::bar_attr> & bars_;
         };
 
-        void convert_melody_division(muscr::generator::ljs::leadsheet_attr const& destAttr,
+        void convert_melody_division(muscr::generator::ljs::leadsheet_staff_attr const& destAttr,
                                      std::vector<muscr::generator::ljs::bar_attr> & bars,
                                      muscr::parser::division_attr const& bar)
         {
@@ -66,7 +66,7 @@ namespace muscr
             }
         }
 
-        void convert_chord_division(muscr::generator::ljs::leadsheet_attr const& destAttr,
+        void convert_chord_division(muscr::generator::ljs::leadsheet_staff_attr const& destAttr,
                                     std::vector<muscr::generator::ljs::bar_attr> & bars,
                                     muscr::parser::chord_division_attr const& bar)
         {
@@ -82,7 +82,7 @@ namespace muscr
 
     auto to_ljs_song_data(muscr::parser::leadsheet_staff_attr srcAttr)
     {
-        muscr::generator::ljs::leadsheet_attr destAttr;
+        muscr::generator::ljs::leadsheet_staff_attr destAttr;
 
         destAttr.title_         = srcAttr.properties_["title"];
         destAttr.composer_      = srcAttr.properties_["author"];

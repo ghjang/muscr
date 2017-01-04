@@ -95,9 +95,9 @@ namespace muscr::generator::ljs
     };
 
     template <typename OutIter>
-    struct leadsheet : karma::grammar<OutIter, leadsheet_attr()>
+    struct leadsheet_staff : karma::grammar<OutIter, leadsheet_staff_attr()>
     {
-        leadsheet() : leadsheet::base_type(lsObj_)
+        leadsheet_staff() : leadsheet_staff::base_type(lsObj_)
         {
             lsObj_ = lit("{ ")
                             << "title : '" << string << "', "
@@ -109,7 +109,7 @@ namespace muscr::generator::ljs
         }
 
         section<OutIter> section_;
-        karma::rule<OutIter, leadsheet_attr()> lsObj_;
+        karma::rule<OutIter, leadsheet_staff_attr()> lsObj_;
     };
 } // namespace muscr::generator::ljs
 
