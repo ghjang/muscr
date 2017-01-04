@@ -10,11 +10,13 @@ namespace muscr::division_ratio
     template <int Factor = 1>
     struct ratio
     {
-        ratio(int num, int denom)
+    public:
+        ratio(int num = 0, int denom = 1)
             : numerator_(num)
             , denominator_(denom)
         { }
-        
+
+    public:    
         bool operator < (ratio<Factor> const& rhs) const
         {
             if (0 == denominator_ || 0 == rhs.denominator_) {
@@ -30,6 +32,13 @@ namespace muscr::division_ratio
                         && (Factor * denominator_ == Factor * rhs.denominator_);
         }
 
+    public:
+        ratio<Factor> operator * (ratio<Factor> const& rhs) const
+        {
+            return ratio<Factor>{ numerator_ * rhs.numerator_, denominator_ * rhs.denominator_ };
+        }
+    
+    public:
         int const numerator_;
         int const denominator_; 
     };

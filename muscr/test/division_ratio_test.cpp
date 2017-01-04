@@ -49,3 +49,15 @@ TEST_CASE("named ratio comparison", "[division ratio]")
     REQUIRE(eighth_rest < quater_rest);
     REQUIRE(sixteenth_rest < eighth_rest);
 }
+
+TEST_CASE("ratio multiplication", "[division ratio]")
+{
+    using namespace muscr::division_ratio;
+
+    REQUIRE(ratio<>{ 4 } == ratio<>{ 1 } * ratio<>{ 4 });
+    REQUIRE(ratio<>{ 2 } == ratio<>{ 1 } * ratio<>{ 2 });
+    REQUIRE(ratio<>{ 3 } == ratio<>{ 1 } * ratio<>{ 3 });
+    REQUIRE((ratio<>{ 6, 2 } == ratio<>{ 1, 2 } * ratio<>{ 6 }));
+
+    REQUIRE((ratio<>{ 6, 2 } == eighth_note * ratio<>{ 6 }));
+}
