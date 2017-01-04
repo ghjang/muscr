@@ -63,6 +63,9 @@ namespace muscr::division_ratio
         ratio<Factor> to_lowest_term() const
         {
             auto gcd = detail::gcd(numerator_, denominator_);
+            if (0 == gcd) {
+                return *this;
+            }
             return ratio<Factor>{ numerator_ / gcd, denominator_ / gcd };
         }
     
