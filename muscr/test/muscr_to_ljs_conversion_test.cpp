@@ -12,7 +12,7 @@ R"(
 @author: ghjang
 
 @scale: C Major
-@pitchRange: 3
+@pitchRange: 4
 @clef: G
 
 @timeSignature: 4 / 4
@@ -35,7 +35,7 @@ A :=
     REQUIRE("A Sample Song" == destAttr.title_);
     REQUIRE("ghjang" == destAttr.composer_);
     REQUIRE("C Major" == destAttr.keySignature_);
-    REQUIRE("4 / 4" == destAttr.time_);
+    REQUIRE("4/4" == destAttr.time_);
 
     REQUIRE(destAttr.sections_.size() == 1);
     auto & s = destAttr.sections_.front();
@@ -54,7 +54,7 @@ A :=
 
     auto & n = b.notes_.front();
     REQUIRE("A" == n.pitchClass_);
-    REQUIRE(3 == n.octavePos_);
+    REQUIRE(4 == n.octavePos_);
     REQUIRE("h" == n.duration_);
 
     // generation
@@ -71,7 +71,7 @@ R"(
 @author: ghjang
 
 @scale: C Major
-@pitchRange: 3
+@pitchRange: 4
 @clef: G
 
 @timeSignature: 4 / 4

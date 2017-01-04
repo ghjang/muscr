@@ -2,7 +2,7 @@
 @author ghjang
 
 @defautlScale: C Major
-@defaultPitchRange: 3
+@defaultPitchRange: 4
 @defaultClef: G
 
 @timeSignature: 4 / 4

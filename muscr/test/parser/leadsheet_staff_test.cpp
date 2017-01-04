@@ -15,7 +15,7 @@ R"(
 @author: ghjang
 
 @scale: C Major
-@pitchRange: 3
+@pitchRange: 4
 @clef: G
 
 @timeSignature: 4 / 4
@@ -44,7 +44,7 @@ R"(
 @author: ghjang
 
 @scale: C Major
-@pitchRange: 3
+@pitchRange: 4
 @clef: G
 
 @timeSignature: 4 / 4
@@ -56,7 +56,7 @@ R"(
 @author: ghjang
 
 @scale: C Major
-@pitchRange: 3
+@pitchRange: 4
 @clef: G
 
 @timeSignature: 4 / 4
@@ -88,7 +88,7 @@ R"(
 @author: ghjang
 
 @scale: C Major
-@pitchRange: 3
+@pitchRange: 4
 @clef: G
 
 @timeSignature: 4 / 4
@@ -116,7 +116,7 @@ A :=
     REQUIRE("A Sample Song" == attr.properties_["title"]);
     REQUIRE("ghjang" == attr.properties_["author"]);
     REQUIRE("C Major" == attr.properties_["scale"]);
-    REQUIRE("3" == attr.properties_["pitchRange"]);
+    REQUIRE("4" == attr.properties_["pitchRange"]);
     REQUIRE("G" == attr.properties_["clef"]);
     REQUIRE("4 / 4" == attr.properties_["timeSignature"]);
     REQUIRE("100" == attr.properties_["bpm"]);
