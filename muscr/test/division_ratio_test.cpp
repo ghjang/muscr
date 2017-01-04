@@ -10,11 +10,11 @@ TEST_CASE("division ratio comparison", "[division ratio]")
     using namespace std::rel_ops;
     using muscr::division_ratio::ratio;
 
-    ratio r0(1, 4);
-    ratio r1(1, 4);
+    ratio<> r0(1, 4);
+    ratio<> r1(1, 4);
     REQUIRE(r0 == r1);
 
-    ratio r2(1, 8);
+    ratio<> r2(1, 8);
     REQUIRE(r2 < r1);
 
     // NOTE: need to enclose the comparison expressions with extra parenthesis
@@ -24,7 +24,7 @@ TEST_CASE("division ratio comparison", "[division ratio]")
     REQUIRE((r1 >= r2));
     REQUIRE((r1 != r2));
 
-    ratio r3(1, 0);
+    ratio<> r3(1, 0);
     bool wasDivByZeroThrown = false;
     try {
         if (r2 < r3) { }
