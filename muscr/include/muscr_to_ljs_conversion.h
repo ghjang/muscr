@@ -220,6 +220,12 @@ namespace muscr
         destAttr.keySignature_  = srcAttr.properties_["scale"];
         destAttr.time_          = srcAttr.properties_["timeSignature"];
 
+        // FIXME: Major key is assumed.
+        destAttr.keySignature_.erase(
+            std::find_if(destAttr.keySignature_.begin(), destAttr.keySignature_.end(), isspace),
+            destAttr.keySignature_.end()
+        );
+
         // NOTE: LeadsheetJS requires no spaces in the time signature string expression.
         destAttr.time_.erase(
             std::remove_if(destAttr.time_.begin(), destAttr.time_.end(), isspace),

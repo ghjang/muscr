@@ -34,7 +34,7 @@ A :=
 
     REQUIRE("A Sample Song" == destAttr.title_);
     REQUIRE("ghjang" == destAttr.composer_);
-    REQUIRE("C Major" == destAttr.keySignature_);
+    REQUIRE("C" == destAttr.keySignature_);
     REQUIRE("4/4" == destAttr.time_);
 
     REQUIRE(destAttr.sections_.size() == 1);
