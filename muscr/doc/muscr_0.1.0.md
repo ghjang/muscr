@@ -41,6 +41,8 @@ A :=
 songForm := { A }
 ```
 
+The last section will be the main section which results in the final leadsheet.
+
 ---
 
 ## muscr file format for leadsheet PEG definition
