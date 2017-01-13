@@ -29,6 +29,7 @@ set(SOURCE_FILES
         generator/leadsheet_js_duration_test.cpp
         range/midi_note_test.cpp
         range/pitch_test.cpp
+        range/transform_test.cpp
         muscr_to_ljs_conversion_test.cpp
         division_ratio_test.cpp)
 
