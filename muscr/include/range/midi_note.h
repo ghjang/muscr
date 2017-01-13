@@ -8,6 +8,9 @@
 #include <range/v3/all.hpp>
 
 
+// refer to http://www.electronics.dit.ie/staff/tscarff/Music_technology/midi/midi_note_numbers_for_octaves.htm
+
+
 namespace muscr::range
 {
     struct midi_note_number
