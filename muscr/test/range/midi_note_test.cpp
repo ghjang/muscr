@@ -26,6 +26,11 @@ TEST_CASE("midi note number range view", "[range]")
     REQUIRE(0 == first10Notes.front());
     REQUIRE(9 == first10Notes.back());
 
+    std::vector<number_t> totalNotes = notes | view::take(256);
+    REQUIRE(128 == totalNotes.size());
+    REQUIRE(0 == totalNotes.front());
+    REQUIRE(127 == totalNotes.back());
+
     midi_note_number_range_view notes1{ 60 }; // middle C
     std::vector<number_t> middleNotes = notes1 | view::take(12);
     REQUIRE(12 == middleNotes.size());
