@@ -70,7 +70,7 @@ namespace muscr::range
 
     inline pitch_class to_pitch_class(midi_note_number const& n)
     {
-        return pitch_class{};
+        return pitch_class{ static_cast<pitch_class::number_type>(n % 12) };
     }
 } // namespace muscr::range
 

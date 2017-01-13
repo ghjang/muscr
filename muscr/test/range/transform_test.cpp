@@ -14,7 +14,7 @@ TEST_CASE("to_string", "[range]")
     REQUIRE(to_string(pitch_class{ 1 }, false) == "C#");
 }
 
-TEST_CASE("to_pitch_class", "[range]")
+TEST_CASE("string to_pitch_class", "[range]")
 {
     using muscr::range::to_pitch_class;
 
@@ -25,5 +25,11 @@ TEST_CASE("to_pitch_class", "[range]")
 
 TEST_CASE("midi note number to pitch class", "[range]")
 {
+    using muscr::range::midi_note_number;
+    using muscr::range::pitch_class;
+    using muscr::range::to_pitch_class;
 
+    REQUIRE(0 == to_pitch_class(midi_note_number{ 0 }));
+    REQUIRE(7 == to_pitch_class(midi_note_number{ 127 }));
+    REQUIRE(0 == to_pitch_class(midi_note_number{ 60 }));
 }
