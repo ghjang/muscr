@@ -51,7 +51,7 @@ namespace muscr::range
         struct cursor
         {
             midi_note_number get() const
-            { return midi_note_number{ n_ }; }
+            { return { n_ }; }
 
             bool equal(cursor const& rhs) const
             { return n_ == rhs.n_; }
