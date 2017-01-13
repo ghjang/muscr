@@ -9,7 +9,17 @@
 
 
 namespace muscr::range
-{    
+{
+    struct midi_note_number
+    {
+        using number_type = std::uint8_t;
+
+        operator number_type () const
+        { return n_; }
+
+        number_type const n_;
+    };
+    
     struct midi_note_number_range_view
             : ranges::view_facade<midi_note_number_range_view>
     {
@@ -37,8 +47,8 @@ namespace muscr::range
 
         struct cursor
         {
-            number_type get() const
-            { return n_; }
+            midi_note_number get() const
+            { return midi_note_number{ n_ }; }
 
             bool equal(cursor const& rhs) const
             { return n_ == rhs.n_; }
