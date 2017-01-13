@@ -8,6 +8,7 @@
 TEST_CASE("midi note range", "[range]")
 {
     using namespace ranges;
+    using muscr::range::midi_note_number_range_view;
     using number_t = midi_note_number_range_view::number_type;
 
     midi_note_number_range_view notes;

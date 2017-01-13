@@ -8,64 +8,73 @@
 #include <range/v3/all.hpp>
 
 
-struct midi_note_number_range_view
-        : ranges::view_facade<midi_note_number_range_view>
-{
-public:
-    using number_type = std::uint8_t;
-
-public:
-    midi_note_number_range_view(number_type start = 0, number_type end = 127)
-        : start_{ start }
-        , end_{ end }
+namespace muscr::range
+{    
+    struct midi_note_number_range_view
+            : ranges::view_facade<midi_note_number_range_view>
     {
-        assert(start >= 0 && start <= 127);
-        assert(end >= 0 && end <= 127);
-        assert(start <= end);
-    }
+    public:
+        using number_type = std::uint8_t;
 
-private:
-    number_type const start_;
-    number_type const end_;
+    public:
+        midi_note_number_range_view(number_type start = 0, number_type end = 127)
+            : start_{ start }
+            , end_{ end }
+        {
+            assert(start >= 0 && start <= 127);
+            assert(end >= 0 && end <= 127);
+            assert(start <= end);
 
-private:
-    friend struct ranges::range_access;
+            // TODO: throw an exception.
+        }
 
-    struct cursor
-    {
-        number_type get() const
-        { return n_; }
+    private:
+        number_type const start_;
+        number_type const end_;
 
-        bool equal(cursor const& rhs) const
-        { return n_ == rhs.n_; }
+    private:
+        friend struct ranges::range_access;
 
-        void next()
-        { ++n_; }
+        struct cursor
+        {
+            number_type get() const
+            { return n_; }
 
-        void prev()
-        { --n_; }
+            bool equal(cursor const& rhs) const
+            { return n_ == rhs.n_; }
 
-        std::ptrdiff_t distance_to(cursor const& rhs) const
-        { return rhs.n_ - n_; }
+            void next()
+            { ++n_; }
 
-        void advance(std::ptrdiff_t n)
-        { n_ += n; }
+            void prev()
+            { --n_; }
 
-        number_type n_;   
+            std::ptrdiff_t distance_to(cursor const& rhs) const
+            { return rhs.n_ - n_; }
+
+            void advance(std::ptrdiff_t n)
+            { n_ += n; }
+
+            number_type n_;   
+        };
+
+        cursor begin_cursor() const
+        {
+            assert(start_ <= end_);
+            // TODO: throw an exception.
+
+            return { start_ };
+        }
+
+        cursor end_cursor() const
+        {
+            assert(start_ <= end_);
+            // TODO: throw an exception.
+
+            return { static_cast<number_type>(end_ + 1) };
+        }
     };
-
-    cursor begin_cursor() const
-    {
-        assert(start_ <= end_);
-        return { start_ };
-    }
-
-    cursor end_cursor() const
-    {
-        assert(start_ <= end_);
-        return { static_cast<number_type>(end_ + 1) };
-    }
-};
+} // namespace muscr::range
 
 
 #endif // MUSCR_MIDI_NOTE_H
