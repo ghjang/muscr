@@ -23,14 +23,14 @@ namespace muscr::range
         number_type const n_;
     };
     
-    struct midi_note_number_range_view
-            : ranges::view_facade<midi_note_number_range_view>
+    struct midi_note_number_view
+            : ranges::view_facade<midi_note_number_view>
     {
     public:
         using number_type = std::uint8_t;
 
     public:
-        midi_note_number_range_view(number_type start = 0, number_type end = 127)
+        midi_note_number_view(number_type start = 0, number_type end = 127)
             : start_{ start }
             , end_{ end }
         {
