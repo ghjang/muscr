@@ -139,7 +139,7 @@ namespace muscr::range
             pitch_class get() const
             { return *pPc_; }
 
-            bool equal(cursor const& rhs) const
+            bool equal(cursor const& /* rhs */) const
             { return false; } // infinite range
 
             void next()
