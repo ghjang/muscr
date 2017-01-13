@@ -9,6 +9,9 @@ else()
     message(FATAL_ERROR "Could not find boost!")
 endif()
 
+set(RANGE_ROOT "../../../range-v3/include")
+include_directories(${RANGE_ROOT})
+
 set(MUSCR_ROOT "../..")
 include_directories(${MUSCR_ROOT})
 
@@ -24,6 +27,7 @@ set(SOURCE_FILES
         parser/leadsheet_staff_test.cpp
         generator/leadsheet_js_song_test.cpp
         generator/leadsheet_js_duration_test.cpp
+        range/midi_note_test.cpp
         muscr_to_ljs_conversion_test.cpp
         division_ratio_test.cpp)
 
