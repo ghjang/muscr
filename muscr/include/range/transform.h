@@ -2,6 +2,10 @@
 #define MUSCR_RANGE_TRANSFORM_H
 
 
+#include <cstdint>
+#include <string>
+#include <map>
+
 #include "muscr/include/range/pitch.h"
 #include "muscr/include/range/midi_note.h"
 
@@ -71,6 +75,20 @@ namespace muscr::range
     inline pitch_class to_pitch_class(midi_note_number const& n)
     {
         return pitch_class{ static_cast<pitch_class::number_type>(n % 12) };
+    }
+
+    template <std::int8_t MiddleCOctavePos>
+    midi_note_number to_midi_note_number(pitch<MiddleCOctavePos> const& p)
+    {
+        std::int8_t pos{};
+        if (MiddleCOctavePos < 5) {
+            pos = p.octavePos_ + (5 - MiddleCOctavePos);
+        } else if (MiddleCOctavePos > 5) {
+            pos = p.octavePos_ - (MiddleCOctavePos - 5);
+        } else {
+            pos = p.octavePos_;
+        }
+        return { static_cast<midi_note_number::number_type>(p.pc_ + pos * 12) };
     }
 } // namespace muscr::range
 

@@ -33,3 +33,19 @@ TEST_CASE("midi note number to pitch class", "[range]")
     REQUIRE(7 == to_pitch_class(midi_note_number{ 127 }));
     REQUIRE(0 == to_pitch_class(midi_note_number{ 60 }));
 }
+
+TEST_CASE("pitch to midi note number", "[range]")
+{
+    using muscr::range::pitch;
+    using muscr::range::pitch_class;
+
+    REQUIRE(60 == to_midi_note_number(pitch<>{ 0 }));
+    REQUIRE(60 == to_midi_note_number(pitch<>{ "C" }));
+    REQUIRE(60 == to_midi_note_number(pitch<>{ "C", 3 }));
+    REQUIRE(72 == to_midi_note_number(pitch<>{ "C", 4 }));
+
+    REQUIRE(60 == to_midi_note_number(pitch<4>{ 0 }));
+    REQUIRE(60 == to_midi_note_number(pitch<4>{ "C" }));
+    REQUIRE(60 == to_midi_note_number(pitch<4>{ "C", 4 }));
+    REQUIRE(72 == to_midi_note_number(pitch<4>{ "C", 5 }));
+}

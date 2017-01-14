@@ -5,7 +5,6 @@
 #include <cassert>
 #include <cstdint>
 #include <string>
-#include <map>
 
 #include <boost/algorithm/string.hpp>
 
@@ -48,6 +47,33 @@ namespace muscr::range
 
     private:
         number_type pc_;
+    };
+
+
+    inline pitch_class to_pitch_class(std::string const& s);
+
+    template <std::int8_t MiddleCOctaveNumber = 3>
+    struct pitch
+    {
+        pitch(std::uint8_t pc, std::int8_t pos = MiddleCOctaveNumber)
+            : pc_{ pc }
+            , octavePos_{ pos }
+        {
+            constexpr std::int8_t lowestPos = MiddleCOctaveNumber - 5;
+            constexpr std::int8_t highestPos = MiddleCOctaveNumber + 5;
+            static_assert(lowestPos < highestPos
+                            && highestPos - lowestPos == 10);
+
+            assert(pos >= lowestPos && pos <= highestPos);
+            // TODO: throw an exception
+        }
+
+        pitch(std::string const& pc, std::int8_t pos = MiddleCOctaveNumber)
+            : pitch(to_pitch_class(pc), pos)
+        { }
+
+        pitch_class pc_;
+        std::int8_t octavePos_;
     };
 
 
