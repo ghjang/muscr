@@ -1,5 +1,7 @@
 #include "../catch.hpp"
 
+#include <type_traits>
+
 #include "muscr/include/range/transform.h"
 
 
@@ -9,6 +11,8 @@ TEST_CASE("appending char to std::string", "[tip]")
     std::string s{ "C#" };
     s.append({ static_cast<char>('0' + n) });
     REQUIRE(s == "C#4");
+
+    static_assert(std::is_same<int, decltype('0' + n)>());
 }
 
 TEST_CASE("pitch class to string", "[range]")
