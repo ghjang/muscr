@@ -21,6 +21,17 @@ TEST_CASE("pitch class", "[range]")
     REQUIRE(0 == ++pc);
 }
 
+// NOTE: catch.hpp has some operator overloadings on its own.
+//          This makes conflicts with my overloadings... :(
+//          pitch_class's implicit conversion to an integer seems to be the problem...
+TEST_CASE("pitch class equal comparison", "[range]")
+{
+    using muscr::range::pitch_class;
+
+    REQUIRE(equal(pitch_class{ 0 }, pitch_class{ 0 }));
+    REQUIRE(!equal(pitch_class{ 0 }, pitch_class{ 2 }));
+}
+
 TEST_CASE("pitch class range view", "[range]")
 {
     using namespace ranges;
@@ -38,4 +49,14 @@ TEST_CASE("pitch class range view", "[range]")
     REQUIRE(0 == pcs1.front());
     REQUIRE(7 == pcs1.back());
     REQUIRE("G" == to_string(pcs1.back()));
+}
+
+TEST_CASE("pitch equal comparison", "[range]")
+{
+    using muscr::range::pitch;
+
+    REQUIRE(equal(pitch<>{ 0 }, pitch<>{ 0 }));
+    REQUIRE(!equal(pitch<>{ 0 }, pitch<>{ 2 }));
+    REQUIRE(!equal(pitch<>{ 0 }, pitch<4>{ 0 }));
+    REQUIRE(!equal(pitch<>{ 0 }, pitch<>{ 0, 5 }));
 }

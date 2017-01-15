@@ -45,6 +45,14 @@ namespace muscr::range
             return tmp;
         }
 
+#ifndef TWOBLUECUBES_CATCH_HPP_INCLUDED
+        bool operator == (pitch_class const& rhs) const
+        { return pc_ == rhs.pc_; }
+#endif
+
+        friend bool equal(pitch_class const& lhs, pitch_class const& rhs)
+        { return lhs.pc_ == rhs.pc_; }
+
     private:
         number_type pc_;
     };
@@ -71,6 +79,23 @@ namespace muscr::range
         pitch(std::string const& pc, std::int8_t pos = MiddleCOctaveNumber)
             : pitch(to_pitch_class(pc), pos)
         { }
+
+#ifndef TWOBLUECUBES_CATCH_HPP_INCLUDED
+        template <std::int8_t MiddleCOctaveNumber2>
+        bool operator == (pitch<MiddleCOctaveNumber2> const&) const
+        { return false; }
+
+        bool operator == (pitch<MiddleCOctaveNumber> const& rhs) const
+        { return pc_ == rhs.pc_ && octavePos_ == rhs.octavePos_; }
+#endif
+
+        template <std::int8_t MiddleCOctaveNumber1, std::int8_t MiddleCOctaveNumber2>
+        friend bool equal(pitch<MiddleCOctaveNumber1> const&, pitch<MiddleCOctaveNumber2> const&)
+        { return false; }
+
+        template <std::int8_t MiddleCOctaveNumber1>
+        friend bool equal(pitch<MiddleCOctaveNumber1> const& lhs, pitch<MiddleCOctaveNumber1> const& rhs)
+        { return equal(lhs.pc_, rhs.pc_) && lhs.octavePos_ == rhs.octavePos_; }
 
         pitch_class pc_;
         std::int8_t octavePos_;
