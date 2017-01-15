@@ -60,15 +60,15 @@ namespace muscr::range
 
     inline pitch_class to_pitch_class(std::string const& s);
 
-    template <std::int8_t MiddleCOctaveNumber = 3>
+    template <std::int8_t MidCOctaveNo = 3>
     struct pitch
     {
-        pitch(std::uint8_t pc, std::int8_t pos = MiddleCOctaveNumber)
+        pitch(std::uint8_t pc, std::int8_t pos = MidCOctaveNo)
             : pc_{ pc }
             , octavePos_{ pos }
         {
-            constexpr std::int8_t lowestPos = MiddleCOctaveNumber - 5;
-            constexpr std::int8_t highestPos = MiddleCOctaveNumber + 5;
+            constexpr std::int8_t lowestPos = MidCOctaveNo - 5;
+            constexpr std::int8_t highestPos = MidCOctaveNo + 5;
             static_assert(lowestPos < highestPos
                             && highestPos - lowestPos == 10);
 
@@ -76,25 +76,25 @@ namespace muscr::range
             // TODO: throw an exception
         }
 
-        pitch(std::string const& pc, std::int8_t pos = MiddleCOctaveNumber)
+        pitch(std::string const& pc, std::int8_t pos = MidCOctaveNo)
             : pitch(to_pitch_class(pc), pos)
         { }
 
 #ifndef TWOBLUECUBES_CATCH_HPP_INCLUDED
-        template <std::int8_t MiddleCOctaveNumber2>
-        bool operator == (pitch<MiddleCOctaveNumber2> const&) const
+        template <std::int8_t MidCOctaveNo2>
+        bool operator == (pitch<MidCOctaveNo2> const&) const
         { return false; }
 
-        bool operator == (pitch<MiddleCOctaveNumber> const& rhs) const
+        bool operator == (pitch<MidCOctaveNo> const& rhs) const
         { return pc_ == rhs.pc_ && octavePos_ == rhs.octavePos_; }
 #endif
 
-        template <std::int8_t MiddleCOctaveNumber1, std::int8_t MiddleCOctaveNumber2>
-        friend bool equal(pitch<MiddleCOctaveNumber1> const&, pitch<MiddleCOctaveNumber2> const&)
+        template <std::int8_t MidCOctaveNo1, std::int8_t MidCOctaveNo2>
+        friend bool equal(pitch<MidCOctaveNo1> const&, pitch<MidCOctaveNo2> const&)
         { return false; }
 
-        template <std::int8_t MiddleCOctaveNumber1>
-        friend bool equal(pitch<MiddleCOctaveNumber1> const& lhs, pitch<MiddleCOctaveNumber1> const& rhs)
+        template <std::int8_t MidCOctaveNo1>
+        friend bool equal(pitch<MidCOctaveNo1> const& lhs, pitch<MidCOctaveNo1> const& rhs)
         { return equal(lhs.pc_, rhs.pc_) && lhs.octavePos_ == rhs.octavePos_; }
 
         pitch_class pc_;

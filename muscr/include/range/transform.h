@@ -77,34 +77,34 @@ namespace muscr::range
         return pitch_class{ static_cast<pitch_class::number_type>(n % 12) };
     }
 
-    template <std::int8_t MiddleCOctaveNumber = 3>
-    pitch<MiddleCOctaveNumber> to_pitch(midi_note_number const& n)
+    template <std::int8_t MidCOctaveNo = 3>
+    pitch<MidCOctaveNo> to_pitch(midi_note_number const& n)
     {
         std::int8_t pos = n / 12;
-        if (MiddleCOctaveNumber < 5) {
-            pos -= 5 - MiddleCOctaveNumber;
-        } else if (MiddleCOctaveNumber > 5) {
-            pos += MiddleCOctaveNumber - 5;
+        if (MidCOctaveNo < 5) {
+            pos -= 5 - MidCOctaveNo;
+        } else if (MidCOctaveNo > 5) {
+            pos += MidCOctaveNo - 5;
         }
-        return pitch<MiddleCOctaveNumber>{ to_pitch_class(n), pos };
+        return pitch<MidCOctaveNo>{ to_pitch_class(n), pos };
     }
 
-    template <std::int8_t MiddleCOctaveNumber>
-    midi_note_number to_midi_note_number(pitch<MiddleCOctaveNumber> const& p)
+    template <std::int8_t MidCOctaveNo>
+    midi_note_number to_midi_note_number(pitch<MidCOctaveNo> const& p)
     {
         std::int8_t pos{};
-        if (MiddleCOctaveNumber < 5) {
-            pos = p.octavePos_ + (5 - MiddleCOctaveNumber);
-        } else if (MiddleCOctaveNumber > 5) {
-            pos = p.octavePos_ - (MiddleCOctaveNumber - 5);
+        if (MidCOctaveNo < 5) {
+            pos = p.octavePos_ + (5 - MidCOctaveNo);
+        } else if (MidCOctaveNo > 5) {
+            pos = p.octavePos_ - (MidCOctaveNo - 5);
         } else {
             pos = p.octavePos_;
         }
         return { static_cast<midi_note_number::number_type>(p.pc_ + pos * 12) };
     }
 
-    template <std::int8_t MiddleCOctaveNumber>
-    std::string to_string(pitch<MiddleCOctaveNumber> const& p, bool useFlat = true)
+    template <std::int8_t MidCOctaveNo>
+    std::string to_string(pitch<MidCOctaveNo> const& p, bool useFlat = true)
     {
         std::string s{ to_string(p.pc_, useFlat) };
         s.append({ static_cast<char>('0' + p.octavePos_) });
