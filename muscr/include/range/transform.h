@@ -77,14 +77,26 @@ namespace muscr::range
         return pitch_class{ static_cast<pitch_class::number_type>(n % 12) };
     }
 
-    template <std::int8_t MiddleCOctavePos>
-    midi_note_number to_midi_note_number(pitch<MiddleCOctavePos> const& p)
+    template <std::int8_t MiddleCOctaveNumber = 3>
+    pitch<MiddleCOctaveNumber> to_pitch(midi_note_number const& n)
+    {
+        std::int8_t pos = n / 12;
+        if (MiddleCOctaveNumber < 5) {
+            pos -= 5 - MiddleCOctaveNumber;
+        } else if (MiddleCOctaveNumber > 5) {
+            pos += MiddleCOctaveNumber - 5;
+        }
+        return pitch<MiddleCOctaveNumber>{ to_pitch_class(n), pos };
+    }
+
+    template <std::int8_t MiddleCOctaveNumber>
+    midi_note_number to_midi_note_number(pitch<MiddleCOctaveNumber> const& p)
     {
         std::int8_t pos{};
-        if (MiddleCOctavePos < 5) {
-            pos = p.octavePos_ + (5 - MiddleCOctavePos);
-        } else if (MiddleCOctavePos > 5) {
-            pos = p.octavePos_ - (MiddleCOctavePos - 5);
+        if (MiddleCOctaveNumber < 5) {
+            pos = p.octavePos_ + (5 - MiddleCOctaveNumber);
+        } else if (MiddleCOctaveNumber > 5) {
+            pos = p.octavePos_ - (MiddleCOctaveNumber - 5);
         } else {
             pos = p.octavePos_;
         }
