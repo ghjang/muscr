@@ -82,5 +82,25 @@ TEST_CASE("midi note number to pitch", "[range]")
 
 TEST_CASE("pitch to string", "[range]")
 {
+    using muscr::range::pitch;
+    using muscr::range::to_string;
+
+    REQUIRE("C3" == to_string(pitch<>{ 0 }));
+    REQUIRE("Db3" == to_string(pitch<>{ 1 }));
+    REQUIRE("C#3" == to_string(pitch<>{ 1 }, false));
+    REQUIRE("C4" == to_string(pitch<4>{ 0 }));
+    REQUIRE("Db4" == to_string(pitch<4>{ 1 }));
+    REQUIRE("C#4" == to_string(pitch<4>{ 1 }, false));
+    
+    REQUIRE("C3" == to_string(pitch<>{ "C" }));
+    REQUIRE("Db3" == to_string(pitch<>{ "C#" }));
+    REQUIRE("C#3" == to_string(pitch<>{ "C#" }, false));
+    REQUIRE("C4" == to_string(pitch<>{ "C", 4 }));
+    REQUIRE("Db4" == to_string(pitch<>{ "C#", 4 }));
+    REQUIRE("C#4" == to_string(pitch<>{ "C#", 4 }, false));
+}
+
+TEST_CASE("string to pitch", "[range]")
+{
 
 }

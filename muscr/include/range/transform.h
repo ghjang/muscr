@@ -102,6 +102,14 @@ namespace muscr::range
         }
         return { static_cast<midi_note_number::number_type>(p.pc_ + pos * 12) };
     }
+
+    template <std::int8_t MiddleCOctaveNumber>
+    std::string to_string(pitch<MiddleCOctaveNumber> const& p, bool useFlat = true)
+    {
+        std::string s{ to_string(p.pc_, useFlat) };
+        s.append({ static_cast<char>('0' + p.octavePos_) });
+        return s;
+    }
 } // namespace muscr::range
 
 
