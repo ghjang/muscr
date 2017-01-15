@@ -3,6 +3,14 @@
 #include "muscr/include/range/transform.h"
 
 
+TEST_CASE("appending char to std::string", "[tip]")
+{
+    char n = 4;
+    std::string s{ "C#" };
+    s.append({ static_cast<char>('0' + n) });
+    REQUIRE(s == "C#4");
+}
+
 TEST_CASE("pitch class to string", "[range]")
 {
     using muscr::range::pitch_class;
