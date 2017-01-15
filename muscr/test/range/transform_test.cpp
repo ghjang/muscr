@@ -114,5 +114,7 @@ TEST_CASE("pitch to string", "[range]")
 
 TEST_CASE("string to pitch", "[range]")
 {
-
+    // NOTE: This can't be done with the current pitch class template.
+    //        pitch class template's MidCOctaveNo non-type template parameter value
+    //        can't be generated at runtime.  
 }
